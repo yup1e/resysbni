@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="3dip"
+    >
+    <TextView
+        android:id="@+id/idKantor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:visibility="gone"/>
+    <TextView
+        android:layout_toRightOf="@+id/idKantor"
+        android:padding="3dip"
+        android:layout_marginTop="2dip"
+        android:id="@+id/nama"
+        android:layout_marginLeft="5dip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SKC Padalarang 1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/titleColor"/>
+    <TextView
+        android:layout_toRightOf="@+id/idKantor"
+        android:padding="2dip"
+        android:layout_marginLeft="5dip"
+        android:id="@+id/keterangan"
+        android:layout_below="@+id/nama"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:text="Jl. Cikutra baru VI No. 33"
+        android:textColor="@color/textColor"/>
+</RelativeLayout>

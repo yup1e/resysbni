@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<color name="colorPrimary">#E76F51</color>
+    <color name="colorPrimaryDark">#F4A261</color>
+    <color name="colorAccent">#264653</color>-->
+    <color name="colorPrimary">#F15A23</color>
+    <color name="colorPrimaryDark">#d4420d</color>
+    <color name="colorAccent">#025E6A</color>
+    <color name="btn_color">#F15A23</color>
+    <color name="btn_shadow">#d4420d</color>
+    <color name="colorTextPrimary">#4b4f54</color>h
+    <color name="colorTextAcceent">#a5a7aa</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="navigationBarColor">#000000</color>
+    <color name="borderLineColor">#000000</color>
+    <color name="titleColor">#212121</color>
+    <color name="textColor">#727272</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="grey">#808080</color>
+</resources>

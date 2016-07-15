@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.sahaware.resysbni.view.activity.DetailNasabahActivity"
+    tools:showIn="@layout/activity_detail_nasabah">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:text="No. KTP "
+                style="@style/detail_title" />
+            <TextView
+                android:id="@+id/txt_detail_no_ktp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3515040611910003"
+                android:textSize="18dp"
+                android:layout_marginLeft="40dp"
+                />
+        </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/cardview_dark_background"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:text="Nama "
+                    style="@style/detail_title" />
+                <TextView
+                    android:id="@+id/txt_detail_nama"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Noor Shakato Eka Dhana"
+                    android:textSize="18dp"
+                    android:layout_marginLeft="40dp"
+                    />
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/cardview_dark_background"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
+
+
+            <TextView
+                android:text="Alamat"
+                style="@style/detail_title"
+                />
+            <TextView
+                android:id="@+id/txt_detail_alamat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cikutra baru VI No. 33"
+                android:textSize="18dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <TextView
+                android:text="No. Telp"
+                style="@style/detail_title"
+                />
+            <TextView
+                android:id="@+id/txt_detail_no_telp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="089676679666"
+                android:textSize="18dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <TextView
+                android:text="Tanggal Submit"
+                style="@style/detail_title"
+                />
+            <TextView
+                android:id="@+id/txt_detail_tanggal_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="21/05/2016"
+                android:textSize="18dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <TextView
+                android:text="Nama Petugas"
+                style="@style/detail_title"
+                />
+            <TextView
+                android:id="@+id/txt_detail_nama_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="21/05/2016"
+                android:textSize="18dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <TextView
+                android:text="Lama Usaha"
+                style="@style/detail_title"
+                />
+            <TextView
+                android:id="@+id/txt_detail_lama_usaha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="10 bulan"
+                android:textSize="18dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <TextView
+                android:text="Sektor Usaha"
+                style="@style/detail_title"
+                />
+            <TextView
+                android:id="@+id/txt_detail_sektor_usaha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="21/05/2016"
+                android:textSize="18dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="20dp"
+                />
+
+           <TextView
+                android:text="Besar Pinjaman"
+                style="@style/detail_title"
+                />
+            <TextView
+                android:id="@+id/txt_detail_besar_pinjaman"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Rp. 10000000"
+                android:textSize="18dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <TextView
+                android:text="Anggunan"
+                style="@style/detail_title"
+                />
+            <TextView
+                android:id="@+id/txt_detail_anggunan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Rumah"
+                android:textSize="18dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <TextView
+                android:text="Kantor Cabang"
+                style="@style/detail_title"
+                />
+            <TextView
+                android:id="@+id/txt_detail_kantor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Kantor BNI Cab. Padalarang"
+                android:textSize="18dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <TextView
+            android:text="Jenis Kredit"
+            style="@style/detail_title"
+            />
+            <TextView
+                android:id="@+id/txt_detail_jenis_kredit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="KUR"
+                android:textSize="18dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="20dp"
+                />
+            <TextView
+                android:text="Status"
+                style="@style/detail_title"
+                />
+            <TextView
+                android:id="@+id/txt_detail_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="KUR"
+                android:textSize="18dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginBottom="20dp"
+                />
+            <!--<com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinner_detail_jenis"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:hint="Jenis Kredit"/>-->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <info.hoang8f.widget.FButton
+                    android:id="@+id/btn_detail_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="15dp"
+                    android:paddingTop="5dp"
+                    android:text="BACK"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:drawableLeft="@drawable/ic_back"
+                    android:textColor="@android:color/white"
+                    fbutton:buttonColor="@color/btn_color"
+                    fbutton:cornerRadius="5dp"
+                    fbutton:shadowEnabled="false"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:visibility="gone"/>
+                <info.hoang8f.widget.FButton
+                    android:id="@+id/btn_detail_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="15dp"
+                    android:paddingTop="5dp"
+                    android:text="SAVE"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:drawableRight="@drawable/ic_save"
+                    android:textColor="@android:color/white"
+                    fbutton:buttonColor="@color/btn_color"
+                    fbutton:cornerRadius="5dp"
+                    fbutton:shadowEnabled="false"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:visibility="gone"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
