@@ -42,7 +42,7 @@
                     android:layout_marginLeft="16dp"
                     android:text="Data Nasabah"
                     android:textColor="@color/colorTextPrimary"
-                    android:textSize="20dp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <View
@@ -58,7 +58,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="-"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="5dp"
@@ -152,7 +152,7 @@
                     android:layout_height="wrap_content"
                     android:text="Kredit"
                     android:textColor="@color/colorTextPrimary"
-                    android:textSize="20dp"
+                    android:textSize="20sp"
                     android:layout_marginTop="32dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="16dp"
@@ -170,7 +170,7 @@
                     android:layout_marginLeft="16dp"
                     android:text="Jenis Kredit"
                     android:textColor="@color/colorTextPrimary"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginTop="32dp"/>
                 <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
@@ -224,10 +224,12 @@
 
 
                 <android.support.design.widget.TextInputLayout
+                    android:id="@+id/layoutJumlah"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="8dp"
+                    android:visibility="visible">
                     <EditText android:id="@+id/input_submit_kredit_jumlah"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -239,10 +241,12 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
+                    android:id="@+id/layoutAgunan"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="8dp"
+                    android:visibility="visible">
                     <EditText android:id="@+id/input_submit_kredit_agunan"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -258,7 +262,7 @@
                     android:layout_marginLeft="16dp"
                     android:text="Lokasi dan foto tempat usaha"
                     android:textColor="@color/colorTextPrimary"
-                    android:textSize="20dp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_marginTop="32dp"/>
 
@@ -320,7 +324,7 @@
                     android:layout_marginLeft="16dp"
                     android:text="Lokasi dan foto tempat usaha"
                     android:textColor="@color/colorTextPrimary"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"/>
                 <TextView
@@ -329,7 +333,7 @@
                     android:layout_marginBottom="10dp"
                     android:text="Rekomendasi Kantor"
                     android:textColor="@color/colorTextPrimary"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"/>
 
@@ -340,7 +344,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:textColor="@color/colorTextAcceent"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <RelativeLayout

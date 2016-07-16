@@ -153,7 +153,10 @@ public class SubmitFragment extends Fragment {
     RadioButton rbKUR;
     @BindView(R.id.rbLakuPandai)
     RadioButton rbLakuPandai;
-
+    @BindView(R.id.layoutJumlah)
+    TextInputLayout layoutJumlah;
+    @BindView(R.id.layoutAgunan)
+    TextInputLayout layoutAgunan;
     private Unbinder unbinder;
 
     ImageView id_img;
@@ -201,6 +204,7 @@ public class SubmitFragment extends Fragment {
     ImageView transparentImageView;
     int RadioBtnId;
     RadioButton r;
+    boolean statusSent = false, statusresult = false;
     public SubmitFragment() {
         listKantorRadius = new ArrayList<>();
         listJenis = new ArrayList<>();
@@ -551,6 +555,31 @@ public class SubmitFragment extends Fragment {
         spn_kantor.setOnItemClickListener(listenerKantor);
         util = new UtilityImageByte();
 
+        rgJenis.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId)
+            {
+                switch(checkedId)
+                {
+                    case R.id.rbKUR:
+                        // TODO Something
+                        layoutJumlah.setVisibility(View.VISIBLE);
+                        layoutAgunan.setVisibility(View.VISIBLE);
+                        break;
+                    case R.id.rbLakuPandai:
+                        // TODO Something
+                        layoutJumlah.setVisibility(View.GONE);
+                        layoutAgunan.setVisibility(View.GONE);
+                        break;
+                    case R.id.rbEDC:
+                        // TODO Something
+                        layoutJumlah.setVisibility(View.GONE);
+                        layoutAgunan.setVisibility(View.GONE);
+                        break;
+                }
+            }
+        });
 
         /*if (mMap == null) {
             mMap = ((SupportMapFragment) getActivity().getSupportFragmentManager()
@@ -641,7 +670,7 @@ public class SubmitFragment extends Fragment {
                     .input("", null, false, new MaterialDialog.InputCallback() {
                         @Override
                         public void onInput(MaterialDialog dialog, CharSequence input) {
-                            progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
+                            progressDialog = new SpotsDialog(getActivity(), "Cek nomor KTP...");
                             String ktp = input.toString();
                             progressDialog.show();
                             CheckKTP(ktp);
@@ -672,7 +701,8 @@ public class SubmitFragment extends Fragment {
 
     @OnClick({R.id.img_submit_location_1,
             R.id.img_submit_location_2,
-            R.id.btn_submit_data_nasabah})
+            R.id.btn_submit_data_nasabah,
+            R.id.rgJenis})
     public void onClick(View view) {
         Intent cameraIntent;
         switch (view.getId()) {
@@ -711,8 +741,10 @@ public class SubmitFragment extends Fragment {
                 startDialog();
                 break;
             case R.id.btn_submit_data_nasabah:
-                new AddImageTask().execute();
-                // InitValue();
+                btn_submit_data_nasabah.setEnabled(false);
+                progressDialog = new SpotsDialog(getActivity(), "Menyimpan Data...");
+                //new AddImageTask().execute();
+                 InitValue();
                 break;
         }
     }
@@ -726,6 +758,7 @@ public class SubmitFragment extends Fragment {
         str_lama_usaha = edt_submit_lama_usaha.getText().toString();
         str_jenis_kredit = spn_jenis_kredit.getText().toString();
         str_jumlah_kredit = edt_submit_kredit_jumlah.getText().toString();
+        //if (rgJenis.getCheckedRadioButtonId(R.id.rbKUR))
         str_agunan = edt_submit_kredit_agunan.getText().toString();
         str_kantor = spn_kantor.getText().toString();
         RadioBtnId = rgJenis.getCheckedRadioButtonId();
@@ -955,7 +988,7 @@ public class SubmitFragment extends Fragment {
                 }
 
                 if (status) {
-                    new AddImageTask().execute();
+                    //new AddImageTask().execute();
                     /*DependencyInjection.Get(ISqliteRepository.class).clearNasabah();
                     DependencyInjection.Get(ISqliteRepository.class).clearNasabahTemp();
                     Toast.makeText(getActivity(), "Data Berhasil Disimpan.", Toast.LENGTH_SHORT).show();
@@ -991,6 +1024,7 @@ public class SubmitFragment extends Fragment {
     }
 
     public void CheckKTP(final String ktp) {
+        progressDialog.show();
         final int DEFAULT_TIMEOUT = 20 * 1000;
         JSONObject jsonParams = new JSONObject();
         StringEntity entity = null;
@@ -1230,7 +1264,7 @@ public class SubmitFragment extends Fragment {
         public Bitmap bPhoto;
         //String poiId = "";
         File file ;
-        boolean statusSent = false, statusresult = false;
+
         public AddImageTask()
         {
             if (!statusSent) {
@@ -1278,7 +1312,7 @@ public class SubmitFragment extends Fragment {
                     String token = DependencyInjection.Get(ISessionRepository.class).getToken();
                     dataResult = httpPostFile(
                             streamByteArray,
-                            Constants.API_SAVE_AVATAR_USER + token + "/"+id);
+                            Constants.API_SAVE_IMAGE_NASABAH + token + "/"+id);
                     //"http://bni.yapyek.com/servicesreveral/upload_image_nasabah/"+token+"/"+id);
                     //"http://bni.yapyek.com/servicesreveral/upload_image_avatar/"+token+"/"+id);
                     Log.d("response",dataResult);
@@ -1298,7 +1332,7 @@ public class SubmitFragment extends Fragment {
                     if (dataUser != null) {
                         try {
                             String image = dataUser.getString("image");
-                            if (!statusSent){
+                            if (statusSent){
                                 statusresult = true;
                             }
                             statusSent = true;
@@ -1342,6 +1376,7 @@ public class SubmitFragment extends Fragment {
             if (!statusresult){
                 new AddImageTask().execute();
             }else if (statusresult){
+                btn_submit_data_nasabah.setEnabled(true);
                 DependencyInjection.Get(ISqliteRepository.class).clearNasabah();
                 DependencyInjection.Get(ISqliteRepository.class).clearNasabahTemp();
                 Toast.makeText(getActivity(), "Data Berhasil Disimpan.", Toast.LENGTH_SHORT).show();
@@ -1352,3 +1387,5 @@ public class SubmitFragment extends Fragment {
         }
     }
 }
+
+//Testgithub
