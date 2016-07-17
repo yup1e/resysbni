@@ -177,7 +177,7 @@ public class SubmitFragment extends Fragment {
     private FragmentActivity myContext;
     private GoogleMap mMap;
     private UtilityImageByte util;
-    private SpotsDialog progressDialog;
+    private SpotsDialog progressDialog, progressDialogSave;
     public GPSTracker gps;
     private RecyclerView recyclerView;
     private ListNasabahAdapter mAdapter;
@@ -743,7 +743,7 @@ public class SubmitFragment extends Fragment {
                 break;
             case R.id.btn_submit_data_nasabah:
                 btn_submit_data_nasabah.setEnabled(false);
-                progressDialog = new SpotsDialog(getActivity(), "Menyimpan Data...");
+
                 //new AddImageTask().execute();
                  InitValue();
                 break;
@@ -751,7 +751,7 @@ public class SubmitFragment extends Fragment {
     }
 
     public void InitValue() {
-        progressDialog.show();
+
         str_nama = edt_submit_nama.getText().toString();
         str_alamat = edt_submit_alamat.getText().toString();
         str_no_hp = edt_submit_nope.getText().toString();
@@ -810,7 +810,7 @@ public class SubmitFragment extends Fragment {
                     , str_img2, formattedDate, "Open", latUsaha, langUsaha);
             DependencyInjection.Get(ISqliteRepository.class).addNasabahTemp(nb);
 
-            SaveDataNasabah();
+            //SaveDataNasabah();
         }
     }
 
@@ -937,7 +937,8 @@ public class SubmitFragment extends Fragment {
     }
 
     public void SaveDataNasabah() {
-        progressDialog.show();
+        SpotsDialog progressDialogSave = new SpotsDialog(getActivity(), "Menyimpan Data...");
+        progressDialogSave.show();
         final int DEFAULT_TIMEOUT = 20 * 1000;
         JSONObject jsonParams = new JSONObject();
         StringEntity entity = null;
@@ -972,7 +973,7 @@ public class SubmitFragment extends Fragment {
 
             @Override
             public void onStart() {
-                progressDialog.dismiss();
+                //progressDialogSave.dismiss();
             }
 
             @Override

@@ -26,6 +26,7 @@ import com.sahaware.resysbni.repository.ISqliteRepository;
 import com.sahaware.resysbni.util.Constants;
 import com.sahaware.resysbni.view.fragment.GIFragment;
 import com.sahaware.resysbni.view.fragment.HomeFragment;
+import com.sahaware.resysbni.view.fragment.InformationFragment;
 import com.sahaware.resysbni.view.fragment.ListFragment;
 import com.sahaware.resysbni.view.fragment.ProfileFragment;
 import com.sahaware.resysbni.view.fragment.SubmitFragment;
@@ -108,11 +109,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new HomeFragment(), "Home");
+        adapter.addFragment(new InformationFragment(), "Information");
         adapter.addFragment(new ListFragment(), "List");
         adapter.addFragment(new SubmitFragment(), "Submit");
         adapter.addFragment(new ProfileFragment(), "Profile");
-        adapter.addFragment(new GIFragment(), "Information");
+        adapter.addFragment(new HomeFragment(), "Home");
         viewPager.setAdapter(adapter);
     }
 
