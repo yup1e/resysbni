@@ -464,6 +464,7 @@ public class SubmitFragment extends Fragment {
                         }
                     }
                     txt_rekomendasi_kantor.setText(namaKantor);
+                    txt_rekomendasi_kantor.setTag(dataKantorTerdekat.getIDKantor());
                     mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(dataKantorTerdekat.getLan()), Double.parseDouble(dataKantorTerdekat.getLon())))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.kantor))
@@ -628,7 +629,7 @@ public class SubmitFragment extends Fragment {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
 
-                    //Toast.makeText(getContext(), "You need to grant permission", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "You need to grant permission", Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
@@ -751,7 +752,7 @@ public class SubmitFragment extends Fragment {
     }
 
     public void InitValue() {
-
+        str_no_ktp = txt_submit_no_ktp.getText().toString();
         str_nama = edt_submit_nama.getText().toString();
         str_alamat = edt_submit_alamat.getText().toString();
         str_no_hp = edt_submit_nope.getText().toString();
@@ -761,7 +762,7 @@ public class SubmitFragment extends Fragment {
         str_jumlah_kredit = edt_submit_kredit_jumlah.getText().toString();
         //if (rgJenis.getCheckedRadioButtonId(R.id.rbKUR))
         str_agunan = edt_submit_kredit_agunan.getText().toString();
-        str_kantor = spn_kantor.getText().toString();
+        str_kantor = txt_rekomendasi_kantor.getText().toString();
         RadioBtnId = rgJenis.getCheckedRadioButtonId();
         View radioButton = rgJenis.findViewById(RadioBtnId);
         int idx = rgJenis.indexOfChild(radioButton);
@@ -806,11 +807,11 @@ public class SubmitFragment extends Fragment {
             String formattedDate = df.format(c.getTime());
             NasabahEntity nb = new NasabahEntity(str_no_ktp, str_nama, str_alamat, str_no_hp, str_sektor_usaha,
                     str_lama_usaha, r.getTag().toString() , str_jumlah_kredit, str_agunan,
-                    str_kantor, str_img1
-                    , str_img2, formattedDate, "Open", latUsaha, langUsaha);
+                    str_kantor, formattedDate
+                    , "Open", str_img1, str_img2, latUsaha, langUsaha);
             DependencyInjection.Get(ISqliteRepository.class).addNasabahTemp(nb);
 
-            //SaveDataNasabah();
+            SaveDataNasabah();
         }
     }
 
@@ -937,19 +938,18 @@ public class SubmitFragment extends Fragment {
     }
 
     public void SaveDataNasabah() {
-        SpotsDialog progressDialogSave = new SpotsDialog(getActivity(), "Menyimpan Data...");
+        final SpotsDialog progressDialogSave = new SpotsDialog(getActivity(), "Menyimpan Data...");
         progressDialogSave.show();
         final int DEFAULT_TIMEOUT = 20 * 1000;
         JSONObject jsonParams = new JSONObject();
         StringEntity entity = null;
         try {
-
             jsonParams.put("Alamat", str_alamat);
             jsonParams.put("Anggunan", str_agunan);
-            jsonParams.put("IDKantor", spn_kantor.getTag());
-            jsonParams.put("IDReveral", r.getTag().toString());
+            jsonParams.put("IDKantor", txt_rekomendasi_kantor.getTag());
+            jsonParams.put("IDReveral", r.getTag());
             jsonParams.put("IDUser", DependencyInjection.Get(ISessionRepository.class).getId());
-            jsonParams.put("JmlhKredit", str_jumlah_kredit);
+            jsonParams.put("JmlhKredit", Double.parseDouble(str_jumlah_kredit));
             jsonParams.put("KTP", txt_submit_no_ktp.getText().toString());
             jsonParams.put("LamaUsaha", str_lama_usaha);
             jsonParams.put("Lan", String.valueOf(usaha.latitude));
@@ -959,7 +959,8 @@ public class SubmitFragment extends Fragment {
             jsonParams.put("SektorUsaha", str_sektor_usaha);
             jsonParams.put("token", DependencyInjection.Get(ISessionRepository.class).getToken());
             entity = new StringEntity(jsonParams.toString());
-            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8"));
+            Log.d(TAG, "SaveDataNasabah: " + jsonParams.toString());
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
@@ -995,6 +996,7 @@ public class SubmitFragment extends Fragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    progressDialogSave.dismiss();
                     new AddImageTask().execute();
                     /*DependencyInjection.Get(ISqliteRepository.class).clearNasabah();
                     DependencyInjection.Get(ISqliteRepository.class).clearNasabahTemp();
@@ -1003,12 +1005,15 @@ public class SubmitFragment extends Fragment {
                     startActivity(intent);
                     getActivity().finish();*/
                 } else {
+                    progressDialogSave.dismiss();
                     Toast.makeText(getActivity(), "Terjadi kesalahan pada server.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.Throwable throwable, org.json.JSONArray errorResponse) {
+                progressDialogSave.dismiss();
+                Toast.makeText(getActivity(), "Code " + String.valueOf(statusCode) + "\n Response " + errorResponse, Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onFailure: " + String.valueOf(statusCode));
                 Log.d(TAG, "onFailure: " + headers);
                 Log.d(TAG, "onFailure: " + throwable);
@@ -1017,6 +1022,8 @@ public class SubmitFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.String responseString, java.lang.Throwable throwable) {
+                progressDialogSave.dismiss();
+                Toast.makeText(getActivity(), "Code " + String.valueOf(statusCode) + "\n Response " + responseString, Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onFailure: " + String.valueOf(statusCode));
                 Log.d(TAG, "onFailure: " + headers);
                 Log.d(TAG, "onFailure: " + throwable);

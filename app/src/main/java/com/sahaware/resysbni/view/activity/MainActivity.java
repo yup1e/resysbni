@@ -78,8 +78,12 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 switch (position){
                     case 0:
-                        getDataReport();
+                        DependencyInjection.Get(ISqliteRepository.class).clearInformation();
+                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "KUR", "BNI dapat memberikan pembiayaan kepada usaha anda yang feasible namu masih belum memiliki agunan sesuai persyaratan Bank."));
+                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "EDC", "Pembayaran customer lebih mudah. Customer tidak harus bawa uang Cash/pergi ke ATM dulu untuk ambil uang cash. Tinggal gesek kartu ATM (Debit) atau Kartu Kredit saja maka uang langsung masuk ke rekening pemilik/owner merchant."));
+                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Laku Pandai", "Laku Pandai"));
                         break;
+
                     case 1:
                         if(DependencyInjection.Get(ISqliteRepository.class).isDataNasabahEmpty())
                             getNasabah();
@@ -89,10 +93,7 @@ public class MainActivity extends AppCompatActivity {
                         getDataUser();
                         break;
                     case 4:
-                        DependencyInjection.Get(ISqliteRepository.class).clearInformation();
-                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "KUR", "BNI dapat memberikan pembiayaan kepada usaha anda yang feasible namu masih belum memiliki agunan sesuai persyaratan Bank."));
-                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "EDC", "Pembayaran customer lebih mudah. Customer tidak harus bawa uang Cash/pergi ke ATM dulu untuk ambil uang cash. Tinggal gesek kartu ATM (Debit) atau Kartu Kredit saja maka uang langsung masuk ke rekening pemilik/owner merchant."));
-                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Laku Pandai", "Laku Pandai"));
+                        getDataReport();
                         break;
                 }
             }

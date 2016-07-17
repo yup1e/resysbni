@@ -269,7 +269,7 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
         values.put(KEY_LANG, nasabah.getLang());
 
         // Inserting Row
-        db.insert(TABLE_NASABAH, null, values);
+        db.insert(TABLE_NASABAH_TEMP, null, values);
         db.close(); // Closing database connection
     }
 

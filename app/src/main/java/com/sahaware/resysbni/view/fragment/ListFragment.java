@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,6 +54,7 @@ public class ListFragment extends Fragment {
     private ListNasabahAdapter mAdapter;
     private List<NasabahEntity> nasabahList;
     private SpotsDialog progressDialog;
+    private SwipeRefreshLayout swipeRefreshListNasabahLayout;
 
     public ListFragment() {
         nasabahList = new ArrayList<>();
@@ -82,6 +84,7 @@ public class ListFragment extends Fragment {
         LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText("LIST NASABAH");
+        swipeRefreshListNasabahLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshListNasabahLayout);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
         mAdapter = new ListNasabahAdapter(nasabahList);
@@ -90,7 +93,14 @@ public class ListFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(mAdapter);
-
+        swipeRefreshListNasabahLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Refresh items
+                DependencyInjection.Get(ISqliteRepository.class).clearNasabah();
+                getDataUser();
+            }
+        });
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity().getApplicationContext(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -237,6 +247,7 @@ public class ListFragment extends Fragment {
                 if (progressDialog!=null) {
                     progressDialog.dismiss();
                 }
+                swipeRefreshListNasabahLayout.setRefreshing(false);
                 showDB();
             }
 
