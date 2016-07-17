@@ -204,6 +204,7 @@ public class SubmitFragment extends Fragment {
     ImageView transparentImageView;
     int RadioBtnId;
     RadioButton r;
+    int idNasabah;
     boolean statusSent = false, statusresult = false;
     public SubmitFragment() {
         listKantorRadius = new ArrayList<>();
@@ -946,7 +947,6 @@ public class SubmitFragment extends Fragment {
             jsonParams.put("Anggunan", str_agunan);
             jsonParams.put("IDKantor", spn_kantor.getTag());
             jsonParams.put("IDReveral", r.getTag().toString());
-            jsonParams.put("IDStatus", 1);
             jsonParams.put("IDUser", DependencyInjection.Get(ISessionRepository.class).getId());
             jsonParams.put("JmlhKredit", str_jumlah_kredit);
             jsonParams.put("KTP", txt_submit_no_ktp.getText().toString());
@@ -978,7 +978,7 @@ public class SubmitFragment extends Fragment {
             @Override
             public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, JSONObject response) {
 
-                JSONObject jo;
+                JSONObject jo, obj;
                 Boolean status = false;
                 try {
                     jo = response.getJSONObject(Constants.KEY_STATUS);
@@ -988,7 +988,13 @@ public class SubmitFragment extends Fragment {
                 }
 
                 if (status) {
-                    //new AddImageTask().execute();
+                    try {
+                        obj = response.getJSONObject("obj");
+                        idNasabah = obj.getInt("IDNasabah");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    new AddImageTask().execute();
                     /*DependencyInjection.Get(ISqliteRepository.class).clearNasabah();
                     DependencyInjection.Get(ISqliteRepository.class).clearNasabahTemp();
                     Toast.makeText(getActivity(), "Data Berhasil Disimpan.", Toast.LENGTH_SHORT).show();
@@ -1002,18 +1008,18 @@ public class SubmitFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.Throwable throwable, org.json.JSONArray errorResponse) {
-                Log.d(TAG, "onSuccess: " + String.valueOf(statusCode));
-                Log.d(TAG, "onSuccess: " + headers);
-                Log.d(TAG, "onSuccess: " + throwable);
-                Log.d(TAG, "onSuccess: " + errorResponse);
+                Log.d(TAG, "onFailure: " + String.valueOf(statusCode));
+                Log.d(TAG, "onFailure: " + headers);
+                Log.d(TAG, "onFailure: " + throwable);
+                Log.d(TAG, "onFailure: " + errorResponse);
             }
 
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.String responseString, java.lang.Throwable throwable) {
-                Log.d(TAG, "onSuccess: " + String.valueOf(statusCode));
-                Log.d(TAG, "onSuccess: " + headers);
-                Log.d(TAG, "onSuccess: " + throwable);
-                Log.d(TAG, "onSuccess: " + responseString);
+                Log.d(TAG, "onFailure: " + String.valueOf(statusCode));
+                Log.d(TAG, "onFailure: " + headers);
+                Log.d(TAG, "onFailure: " + throwable);
+                Log.d(TAG, "onFailure: " + responseString);
             }
 
             @Override
@@ -1024,6 +1030,7 @@ public class SubmitFragment extends Fragment {
     }
 
     public void CheckKTP(final String ktp) {
+
         progressDialog.show();
         final int DEFAULT_TIMEOUT = 20 * 1000;
         JSONObject jsonParams = new JSONObject();
@@ -1308,11 +1315,10 @@ public class SubmitFragment extends Fragment {
                     streamByteArray = stream.toByteArray();
                     stream.close();
                     stream = null;
-                    String id = DependencyInjection.Get(ISessionRepository.class).getId();
                     String token = DependencyInjection.Get(ISessionRepository.class).getToken();
                     dataResult = httpPostFile(
                             streamByteArray,
-                            Constants.API_SAVE_IMAGE_NASABAH + token + "/"+id);
+                            Constants.API_SAVE_IMAGE_NASABAH + token + "/" + idNasabah);
                     //"http://bni.yapyek.com/servicesreveral/upload_image_nasabah/"+token+"/"+id);
                     //"http://bni.yapyek.com/servicesreveral/upload_image_avatar/"+token+"/"+id);
                     Log.d("response",dataResult);
