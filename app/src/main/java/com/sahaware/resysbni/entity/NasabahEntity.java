@@ -13,14 +13,14 @@ public class NasabahEntity {
             jenis_kredit,
             jumlah_kredit,
             agunan,
-            kantor, tanggal, status, img1, img2, namaUser;
+            kantor, tanggal, status, img1, img2, namaUser, sla;
     private Double lat, lang;
     private Integer idNasabah;
 
     public NasabahEntity() {
     }
 
-    public NasabahEntity(String no_ktp, String nama, String alamat, String no_hp, String sektor_usaha, String lama_usaha, String jenis_kredit, String jumlah_kredit, String agunan, String kantor, String tanggal, String status, String img1, String img2, Double lat, Double lang) {
+    public NasabahEntity(String no_ktp, String nama, String alamat, String no_hp, String sektor_usaha, String lama_usaha, String jenis_kredit, String jumlah_kredit, String agunan, String kantor, String tanggal, String status, String img1, String img2, Double lat, Double lang, String sla) {
         this.no_ktp = no_ktp;
         this.nama = nama;
         this.alamat = alamat;
@@ -37,9 +37,10 @@ public class NasabahEntity {
         this.img2 = img2;
         this.lat = lat;
         this.lang = lang;
+        this.sla = sla;
     }
 
-    public NasabahEntity(String no_ktp, String nama, String alamat, String no_hp, String sektor_usaha, String lama_usaha, String jenis_kredit, String jumlah_kredit, String agunan, String kantor, String tanggal, String status, String img1, String img2, Double lat, Double lang, Integer idNasabah) {
+    public NasabahEntity(String no_ktp, String nama, String alamat, String no_hp, String sektor_usaha, String lama_usaha, String jenis_kredit, String jumlah_kredit, String agunan, String kantor, String tanggal, String status, String img1, String img2, Double lat, Double lang, Integer idNasabah, String sla) {
         this.no_ktp = no_ktp;
         this.nama = nama;
         this.alamat = alamat;
@@ -57,9 +58,10 @@ public class NasabahEntity {
         this.lat = lat;
         this.lang = lang;
         this.idNasabah = idNasabah;
+        this.sla = sla;
     }
 
-    public NasabahEntity(String no_ktp, String nama, String alamat, String no_hp, String sektor_usaha, String lama_usaha, String jenis_kredit, String jumlah_kredit, String agunan, String kantor, String tanggal, String status, String img1, String img2, Double lat, Double lang, String namaUser, Integer idNasabah) {
+    public NasabahEntity(String no_ktp, String nama, String alamat, String no_hp, String sektor_usaha, String lama_usaha, String jenis_kredit, String jumlah_kredit, String agunan, String kantor, String tanggal, String status, String img1, String img2, Double lat, Double lang, String namaUser, Integer idNasabah, String sla) {
         this.no_ktp = no_ktp;
         this.nama = nama;
         this.alamat = alamat;
@@ -78,6 +80,7 @@ public class NasabahEntity {
         this.lang = lang;
         this.namaUser = namaUser;
         this.idNasabah = idNasabah;
+        this.sla = sla;
     }
 
     public String getNamaUser() {
@@ -222,5 +225,13 @@ public class NasabahEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getSla() {
+        return sla;
+    }
+
+    public void setSla(String sla) {
+        this.sla = sla;
     }
 }

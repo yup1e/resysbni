@@ -752,6 +752,7 @@ public class SubmitFragment extends Fragment {
     }
 
     public void InitValue() {
+        String sla = "0 Hari yang lalu";
         str_no_ktp = txt_submit_no_ktp.getText().toString();
         str_nama = edt_submit_nama.getText().toString();
         str_alamat = edt_submit_alamat.getText().toString();
@@ -808,7 +809,7 @@ public class SubmitFragment extends Fragment {
             NasabahEntity nb = new NasabahEntity(str_no_ktp, str_nama, str_alamat, str_no_hp, str_sektor_usaha,
                     str_lama_usaha, r.getTag().toString() , str_jumlah_kredit, str_agunan,
                     str_kantor, formattedDate
-                    , "Open", str_img1, str_img2, latUsaha, langUsaha);
+                    , "Open", str_img1, str_img2, latUsaha, langUsaha, sla);
             DependencyInjection.Get(ISqliteRepository.class).addNasabahTemp(nb);
 
             SaveDataNasabah();

@@ -306,21 +306,18 @@ public class MainActivity extends AppCompatActivity {
                             String jenis = dataNasabah.getString("namaReveral");
                             String namaStatus = dataNasabah.getString("namaStatus");
                             String tglSubmit = dataNasabah.getString("tglDibuat");
+                            String sla = dataNasabah.getString("sla");
                             try {
-                                JSONArray image = dataNasabah.getJSONArray("Image");
-                                if (image.length() > 0) {
-                                    for (int l = 0; l < image.length(); l++) {
-                                        JSONObject dataImage = image.getJSONObject(l);
-                                        img1 = dataImage.getString("image1");
-                                        img2 = dataImage.getString("image2");
-                                    }
-                                }
+                                JSONObject image = dataNasabah.getJSONObject("Image");
+
+                                img1 = image.getString(Constants.KEY_IMAGE_1);
+                                img2 = image.getString(Constants.KEY_IMAGE_2);
                             } catch (JSONException e) {
                                 img1 = null;
                                 img2 = null;
                             }
 
-                            DependencyInjection.Get(ISqliteRepository.class).addNasabah(new NasabahEntity(ktp, nama, alamat, noTelp, sektorUsaha, lamaUsaha, jenis, jumlahKredit, anggunan, namaKantor, tglSubmit, namaStatus, img1, img2, lat, lang, idNasabah));
+                            DependencyInjection.Get(ISqliteRepository.class).addNasabah(new NasabahEntity(ktp, nama, alamat, noTelp, sektorUsaha, lamaUsaha, jenis, jumlahKredit, anggunan, namaKantor, tglSubmit, namaStatus, img1, img2, lat, lang, idNasabah, sla));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

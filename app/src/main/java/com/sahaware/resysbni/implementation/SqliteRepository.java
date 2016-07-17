@@ -57,6 +57,7 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
     private static final String KEY_IMG2 = "img2";
     private static final String KEY_WAKTU = "waktu_submit";
     private static final String KEY_STATUS = "status";
+    private static final String KEY_SLA = "sla";
 
     // Master Office Table Columns names
     private static final String KEY_NAMA_KANTOR = "nama_kantor";
@@ -121,7 +122,8 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
                 + KEY_IMG1 + " TEXT,"
                 + KEY_IMG2 + " TEXT,"
                 + KEY_WAKTU + " TEXT,"
-                + KEY_STATUS + " TEXT" + ")";
+                + KEY_STATUS + " TEXT,"
+                + KEY_SLA + " TEXT" + ")";
 
         String CREATE_NASABAH_TEMP_TABLE = "CREATE TABLE " + TABLE_NASABAH_TEMP + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"
@@ -140,7 +142,8 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
                 + KEY_IMG1 + " TEXT,"
                 + KEY_IMG2 + " TEXT,"
                 + KEY_WAKTU + " TEXT,"
-                + KEY_STATUS + " TEXT" + ")";
+                + KEY_STATUS + " TEXT,"
+                + KEY_SLA + " TEXT" + ")";
 
         String CREATE_MASTER_KANTOR = "CREATE TABLE " + TABLE_MASTER_KANTOR + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"
@@ -235,7 +238,7 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
         values.put(KEY_STATUS, nasabah.getStatus());
         values.put(KEY_LAT, nasabah.getLat());
         values.put(KEY_LANG, nasabah.getLang());
-
+        values.put(KEY_SLA, nasabah.getSla());
         // Inserting Row
         db.insert(TABLE_NASABAH, null, values);
         db.close(); // Closing database connection
@@ -267,7 +270,7 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
         values.put(KEY_STATUS, nasabah.getStatus());
         values.put(KEY_LAT, nasabah.getLat());
         values.put(KEY_LANG, nasabah.getLang());
-
+        values.put(KEY_SLA, nasabah.getSla());
         // Inserting Row
         db.insert(TABLE_NASABAH_TEMP, null, values);
         db.close(); // Closing database connection
@@ -378,7 +381,7 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NASABAH, new String[]{KEY_NO_KTP,
-                        KEY_NAMA, KEY_ALAMAT, KEY_NO_HP, KEY_SEKTOR, KEY_LAMA, KEY_JENIS, KEY_JUMLAH, KEY_AGUNAN, KEY_KANTOR, KEY_LAT, KEY_LANG, KEY_IMG1, KEY_IMG2, KEY_WAKTU, KEY_STATUS}, KEY_NO_KTP + "=?",
+                        KEY_NAMA, KEY_ALAMAT, KEY_NO_HP, KEY_SEKTOR, KEY_LAMA, KEY_JENIS, KEY_JUMLAH, KEY_AGUNAN, KEY_KANTOR, KEY_LAT, KEY_LANG, KEY_IMG1, KEY_IMG2, KEY_WAKTU, KEY_STATUS, KEY_SLA}, KEY_NO_KTP + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
@@ -386,7 +389,7 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
         NasabahEntity contact = new NasabahEntity(cursor.getString(0), cursor.getString(1), cursor.getString(2),
                 cursor.getString(3), cursor.getString(4), cursor.getString(5),
                 cursor.getString(6), cursor.getString(7), cursor.getString(8),
-                cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getDouble(14), cursor.getDouble(15));
+                cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getDouble(14), cursor.getDouble(15), cursor.getString(16));
         // return contact
         return contact;
     }
@@ -544,6 +547,7 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
                 contact.setImg2(cursor.getString(14));
                 contact.setTanggal(cursor.getString(15));
                 contact.setStatus(cursor.getString(16));
+                contact.setSla(cursor.getString(17));
                 // Adding contact to list
                 nasabahList.add(contact);
             } while (cursor.moveToNext());

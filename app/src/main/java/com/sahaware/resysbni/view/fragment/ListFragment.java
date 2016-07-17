@@ -87,7 +87,7 @@ public class ListFragment extends Fragment {
         swipeRefreshListNasabahLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshListNasabahLayout);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
-        mAdapter = new ListNasabahAdapter(nasabahList);
+        mAdapter = new ListNasabahAdapter(nasabahList, getContext());
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -135,18 +135,18 @@ public class ListFragment extends Fragment {
 
     public void showDB(){
         List<NasabahEntity> nasabahs = DependencyInjection.Get(ISqliteRepository.class).getAllNasabah();
-        List<NasabahEntity> nasabahTemp = DependencyInjection.Get(ISqliteRepository.class).getAllNasabahTemp();
+        //List<NasabahEntity> nasabahTemp = DependencyInjection.Get(ISqliteRepository.class).getAllNasabahTemp();
         nasabahList.clear();
         if (nasabahs != null) {
             for (NasabahEntity nasabah : nasabahs) {
                 nasabahList.add(nasabah);
             }
         }
-        if (nasabahTemp != null) {
+        /*if (nasabahTemp != null) {
             for (NasabahEntity dataNasabahTemp : nasabahTemp) {
                 nasabahList.add(dataNasabahTemp);
             }
-        }
+        }*/
         if(mAdapter!= null) {
             mAdapter.notifyDataSetChanged();
         }
@@ -219,21 +219,18 @@ public class ListFragment extends Fragment {
                             String jenis = dataNasabah.getString("namaReveral");
                             String namaStatus = dataNasabah.getString("namaStatus");
                             String tglSubmit = dataNasabah.getString("tglDibuat");
+                            String sla = dataNasabah.getString("sla");
                             try {
-                                JSONArray image = dataNasabah.getJSONArray("Image");
-                                if (image.length() > 0) {
-                                    for (int l = 0; l < image.length(); l++) {
-                                        JSONObject dataImage = image.getJSONObject(l);
-                                        img1 = dataImage.getString("image1");
-                                        img2 = dataImage.getString("image2");
-                                    }
-                                }
+                                JSONObject image = dataNasabah.getJSONObject("Image");
+
+                                img1 = image.getString(Constants.KEY_IMAGE_1);
+                                img2 = image.getString(Constants.KEY_IMAGE_2);
                             } catch (JSONException e) {
                                 img1 = null;
                                 img2 = null;
                             }
 
-                            DependencyInjection.Get(ISqliteRepository.class).addNasabah(new NasabahEntity(ktp, nama, alamat, noTelp, sektorUsaha, lamaUsaha, jenis, jumlahKredit, anggunan, namaKantor, tglSubmit, namaStatus, img1, img2, lat, lang, idNasabah));
+                            DependencyInjection.Get(ISqliteRepository.class).addNasabah(new NasabahEntity(ktp, nama, alamat, noTelp, sektorUsaha, lamaUsaha, jenis, jumlahKredit, anggunan, namaKantor, tglSubmit, namaStatus, img1, img2, lat, lang, idNasabah, sla));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
