@@ -71,7 +71,7 @@ public class HomeFragment extends Fragment {
                 , container, false);
         LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText("NEWS UPDATE");
+        mTitle.setText("AKTIFITAS REFERRAL TERBARU");
         progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
