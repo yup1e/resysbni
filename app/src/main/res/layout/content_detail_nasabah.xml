@@ -36,7 +36,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Profil"
-                        android:textSize="18dp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/white"
                         android:layout_marginBottom="10dp"
@@ -57,7 +57,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Noor Shakato Eka Dhana"
-                        android:textSize="18dp"
+                        android:textSize="18sp"
                         android:paddingRight="40dp"
                         />
                 </TableRow>
@@ -85,7 +85,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="3515040611910003"
-                        android:textSize="18dp"
+                        android:textSize="18sp"
                         />
                 </TableRow>
                 <TableRow
@@ -111,10 +111,10 @@
                     <TextView
                         android:id="@+id/txt_detail_alamat"
                         android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:textSize="18sp"
                         android:layout_height="wrap_content"
                         android:text="Jl. Pemuda nomor 700 A RT 13 RW 04 Juwet Kenongo Porong Sidoarjo"
-                        android:layout_weight="1"
-                        android:textSize="18dp"
                         />
                 </TableRow>
                 <TableRow
@@ -142,7 +142,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="089676679666"
-                        android:textSize="18dp"
+                        android:textSize="18sp"
                         />
                 </TableRow>
                 <TableRow
@@ -156,7 +156,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Pengajuan"
-                        android:textSize="18dp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/white"
                         android:layout_marginBottom="10dp"
@@ -178,7 +178,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="21/05/2016"
-                        android:textSize="18dp"
+                        android:textSize="18sp"
                         />
                 </TableRow>
                 <TableRow
@@ -203,10 +203,11 @@
                         />
                     <TextView
                         android:id="@+id/txt_detail_kantor"
-                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Kantor BNI Cab. Padalarang"
-                        android:textSize="18dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:textSize="18sp"
+                        android:text="SKC BANDUNG - BNI KCU PERINTIS KEMERDEKAAN"
                         />
                 </TableRow>
                 <TableRow
@@ -234,7 +235,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="21/05/2016"
-                        android:textSize="18dp"
+                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         />
                 </TableRow>
@@ -264,7 +265,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="KUR"
-                        android:textSize="18dp"
+                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         />
                 </TableRow>
@@ -290,10 +291,11 @@
                         />
                     <TextView
                         android:id="@+id/txt_detail_besar_pinjaman"
-                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Rp. 10.000.000"
-                        android:textSize="18dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:textSize="18sp"
+                        android:text="Rp. 90.000.000"
                         android:layout_gravity="center_vertical"
                         />
                 </TableRow>
@@ -322,7 +324,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="KUR"
-                        android:textSize="18dp"
+                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         />
                 </TableRow>
@@ -348,11 +350,11 @@
                         />
                     <TextView
                         android:id="@+id/txt_detail_anggunan"
-                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Mobil BMW Tahun 2016 dan rumah seluas 10 Hektar di daerah setiabudhi"
+                        android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:textSize="18dp"
+                        android:textSize="18sp"
+                        android:text="Mobil BMW Tahun 2016 dan rumah seluas 10 Hektar di daerah setiabudhi"
                         />
                 </TableRow>
                 <TableRow
@@ -366,7 +368,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Usaha"
-                        android:textSize="18dp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/white"
                         android:layout_marginBottom="10dp"
@@ -388,7 +390,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Perdagangan"
-                        android:textSize="18dp"
+                        android:textSize="18sp"
                         android:layout_weight="1"
                         />
                 </TableRow>
@@ -417,7 +419,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="10 bulan"
-                        android:textSize="18dp"
+                        android:textSize="18sp"
                         android:layout_weight="1"
                         />
                 </TableRow>
@@ -431,8 +433,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Lokasi dan Photo Usaha"
-                        android:textSize="18dp"
+                        android:text="Lokasi Usaha"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/white"
                         android:layout_marginBottom="10dp"
@@ -450,34 +452,37 @@
                         android:layout_width="match_parent"
                         android:layout_height="300dp"
                         android:layout_span="2">
-                        <com.google.android.gms.maps.MapView
-                            android:id="@+id/map"
-                            android:name="com.google.android.gms.maps.SupportMapFragment"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="-100dp"
-                            android:layout_marginBottom="-100dp"
-                            tools:context="com.sahaware.resysbni.view.activity.DetailNasabahActivity"/>
 
-                        <ImageView
-                            android:id="@+id/transparent_image"
+                        <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
+                            android:id="@+id/map"
+                            android:name="com.google.android.gms.maps.MapFragment"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:src="@color/transparent" />
+                            map:liteMode="true"
+
+                            />
 
                     </RelativeLayout>
                 </TableRow>
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/colorAccent"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
                     >
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/grey"
-                        android:layout_marginTop="10dp"
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Photo Usaha"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
                         android:layout_marginBottom="10dp"
-                        android:layout_span="2"/>
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_span="2" />
                 </TableRow>
                 <TableRow
                     android:layout_width="match_parent"
@@ -485,32 +490,50 @@
                     >
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="192dp"
                         android:layout_span="2">
                         <ImageView
                             android:id="@+id/img_submit_location_1"
-                            android:layout_width="150dp"
-                            android:layout_height="150dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:background="@drawable/border_image"
                             android:src="@drawable/camera"
-                            android:clickable="true"
-                            android:onClick="onClick"
-                            android:layout_gravity="left"
                             android:tag="img"
                             />
+                    </RelativeLayout>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/grey"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_span="2" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="192dp"
+                        android:layout_span="2">
+
                         <ImageView
                             android:id="@+id/img_submit_location_2"
-                            android:layout_width="150dp"
-                            android:layout_height="150dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:background="@drawable/border_image"
                             android:src="@drawable/camera"
-                            android:clickable="true"
-                            android:onClick="onClick"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentEnd="true"
-                            android:tag="img"/>
+                            android:tag="img" />
                     </RelativeLayout>
-                </TableRow>-->
+                </TableRow>
             </TableLayout>
         </LinearLayout>
     </ScrollView>

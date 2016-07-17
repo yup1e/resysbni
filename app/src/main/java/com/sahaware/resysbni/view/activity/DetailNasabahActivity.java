@@ -4,18 +4,29 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sahaware.resysbni.R;
 import com.sahaware.resysbni.util.Constants;
 import com.sahaware.resysbni.util.UtilityRupiahString;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DetailNasabahActivity extends AppCompatActivity{
+public class DetailNasabahActivity extends AppCompatActivity {
     @BindView(R.id.txt_detail_alamat)
     TextView txt_detail_alamat;
     @BindView(R.id.txt_detail_anggunan)
@@ -41,13 +52,18 @@ public class DetailNasabahActivity extends AppCompatActivity{
     @BindView(R.id.txt_detail_sektor_usaha)
     TextView txt_detail_sektor_usaha;
     @BindView(R.id.txt_detail_tanggal_submit)
-    TextView txt_detail_tanggal_submit;/*
+    TextView txt_detail_tanggal_submit;
+    @BindView(R.id.img_submit_location_1)
+    ImageView img_submit_location_1;
+    @BindView(R.id.img_submit_location_2)
+    ImageView img_submit_location_2;
+    /*
     @BindView(R.id.btn_detail_back)
     FButton btn_detail_back;
     @BindView(R.id.btn_detail_save)
     FButton btn_detail_save;*/
     private GoogleMap mMap;
-    private Double userLat=null, userLang=null;
+    private LatLng locUsaha;
     private MarkerOptions markerOptions;
     private String tanggal, nama, agunan, jumlah_kredit, alamat, no_hp, namaUser, status,
             lama_usaha, kantor, jenis_kredit, no_ktp, sektor_usaha, img1, img2;
@@ -65,24 +81,45 @@ public class DetailNasabahActivity extends AppCompatActivity{
         ButterKnife.bind(this);
         init();
         implement();
-        utilRupiah = new UtilityRupiahString();
-        /*SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(DetailNasabahActivity.this);*/
+        try {
+            // Loading map
+            initilizeMap();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    /*@Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        LatLng user = new LatLng(userLat, userLang);
-        mMap.addMarker(new MarkerOptions().position(user).title("User").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((user), 15));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(12), 2000, null);
+    private void initilizeMap() {
+        if (mMap == null) {
+            mMap = ((MapFragment) getFragmentManager().findFragmentById(
+                    R.id.map)).getMap();
+            MarkerOptions marker = new MarkerOptions().position(locUsaha).title("Hello Maps ");
+            mMap.addMarker(new MarkerOptions()
+                    .position(locUsaha)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.user))
+                    .title("User"));
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((locUsaha), 15);
+            //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((user), 45));
+            mMap.animateCamera(cameraUpdate);
+            mMap.getUiSettings().setMapToolbarEnabled(true);
+            mMap.getUiSettings().setZoomControlsEnabled(true);
+            mMap.getUiSettings().setAllGesturesEnabled(false);
+            // check if map is created successfully or not
+            if (mMap == null) {
+                Toast.makeText(getApplicationContext(),
+                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
+    }
 
-        // Add a marker in Sydney and move the camera
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initilizeMap();
+    }
 
-
-    }*/
 
 
     @Override
@@ -131,6 +168,20 @@ public class DetailNasabahActivity extends AppCompatActivity{
         img2 = bundle.getString(Constants.KEY_IMAGE_2);
         lat = bundle.getString(Constants.KEY_LAT);
         lang = bundle.getString(Constants.KEY_LONG);
+        locUsaha = new LatLng(Double.parseDouble(lat), Double.parseDouble(lang));
+
+        if (!img1.isEmpty()) {
+            Picasso.with(this)
+                    .load(Constants.API_IMAGE_NASABAH_URL + img1)
+                    .error(R.drawable.profile_user)
+                    .into(img_submit_location_1);
+        }
+        if (!img2.isEmpty()) {
+            Picasso.with(this)
+                    .load(Constants.API_IMAGE_NASABAH_URL + img2)
+                    .error(R.drawable.profile_user)
+                    .into(img_submit_location_2);
+        }
     }
 
     private void implement(){

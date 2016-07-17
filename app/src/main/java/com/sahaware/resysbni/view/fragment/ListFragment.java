@@ -385,8 +385,8 @@ public class ListFragment extends Fragment {
                             try {
                                 JSONObject image = obj.getJSONObject("Image");
 
-                                img1 = image.getString(obj.getString(Constants.KEY_IMAGE_1));
-                                img2 = image.getString(obj.getString(Constants.KEY_IMAGE_2));
+                                img1 = image.getString(Constants.KEY_IMAGE_1);
+                                img2 = image.getString(Constants.KEY_IMAGE_2);
 
                             } catch (JSONException e) {
                                 img1 = null;
