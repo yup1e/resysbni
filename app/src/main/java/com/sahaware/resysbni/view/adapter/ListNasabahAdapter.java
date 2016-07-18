@@ -72,7 +72,7 @@ public class ListNasabahAdapter extends RecyclerView.Adapter<ListNasabahAdapter.
             if (nasabah.getStatus().equalsIgnoreCase("open")) {
                 holder.status.setText(nasabah.getStatus());
                 holder.status.setBackgroundResource(R.drawable.border_open);
-            } else if (nasabah.getStatus().equalsIgnoreCase("on progress")) {
+            } else if (nasabah.getStatus().equalsIgnoreCase("on progress") || nasabah.getStatus().equalsIgnoreCase("survey")) {
                 holder.status.setText(nasabah.getStatus());
                 holder.status.setBackgroundResource(R.drawable.border_on_progress);
             } else if (nasabah.getStatus().equalsIgnoreCase("closed")) {
