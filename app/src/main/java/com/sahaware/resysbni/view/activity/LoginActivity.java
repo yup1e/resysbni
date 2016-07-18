@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText loginPasswordText;
     @BindView(R.id.btn_login)
     FButton loginButton;
-    @BindView(R.id.link_forgot_password)
+    //@BindView(R.id.link_forgot_password)
     TextView forgotLink;
     private SpotsDialog progressDialog;
     final Context context = this;
@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        forgotLink.setOnClickListener(new View.OnClickListener() {
+        /*forgotLink.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -80,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), ForgotActivity.class);
                 startActivityForResult(intent, REQUEST_SIGNUP);
             }
-        });
+        });*/
     }
 
     public void login() {
@@ -103,12 +103,12 @@ public class LoginActivity extends AppCompatActivity {
             else {
                 progressDialog.dismiss();
                 loginButton.setEnabled(true);
-                Toast.makeText(LoginActivity.this, "Koneksi ke server gagal !", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Maaf, tidak dapat tergubung ke server.", Toast.LENGTH_SHORT).show();
             }
         else {
             progressDialog.dismiss();
             loginButton.setEnabled(true);
-            Toast.makeText(LoginActivity.this, "Tidak ada koneksi ke internet !", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Tidak dapat terhubung ke internet, silahkan periksa jarigan internet anda.", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -148,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "NPP atau password yang anda masukkan salah !!", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Silahkan masukan NPP atau Password dengan benar.", Toast.LENGTH_LONG).show();
         loginButton.setEnabled(true);
     }
 

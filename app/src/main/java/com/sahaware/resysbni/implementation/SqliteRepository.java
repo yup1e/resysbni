@@ -685,4 +685,20 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
             flag = true;
         return flag;
     }
+
+    public void resetDatabase()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Drop older table if existed
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NASABAH);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NASABAH_TEMP);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_KANTOR);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_JENIS_PINJAMAN);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_STATUS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DETAIL_USER);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_INFORMATION);
+        // Create tables again
+        onCreate(db);
+    }
 }

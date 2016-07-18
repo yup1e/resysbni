@@ -41,4 +41,5 @@ public interface ISqliteRepository {
     void clearDetailUser();
     void clearReport();
     void clearInformation();
+    void resetDatabase();
 }

@@ -12,6 +12,7 @@ public interface ISessionRepository {
     String getUsername();
     void createLoginSession(String id, String username, String token, String rules);
     void checkLogin();
+    void logoutUser();
     HashMap<String, String> getUserDetails();
     boolean isLoggedIn();
 }

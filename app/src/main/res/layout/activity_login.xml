@@ -68,25 +68,32 @@
             android:text="LOGIN"
         />
 
-        <TextView android:id="@+id/link_forgot_password"
+      <!--  <TextView android:id="@+id/link_forgot_password"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Forgot password ? Click here"
             android:gravity="center"
             android:textSize="16dip"
-            android:layout_marginTop="15dp"/>
+            android:layout_marginTop="15dp"/>-->
     </LinearLayout>
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="20"
         android:gravity="center_horizontal">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
+            android:gravity="center_horizontal"
+            android:layout_above="@+id/btmText"
             android:text="© PT. Bank Negara Indonesia (persero) Tbk."/>
-
-    </LinearLayout>
+        <TextView
+            android:id="@+id/btmText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:text="Kantor Wilayah Bandung"/>
+    </RelativeLayout>
 
 </LinearLayout>

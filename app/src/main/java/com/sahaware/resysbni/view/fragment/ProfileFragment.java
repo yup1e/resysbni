@@ -25,7 +25,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+//import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -37,22 +37,23 @@ import com.sahaware.resysbni.helper.DependencyInjection;
 import com.sahaware.resysbni.repository.ISessionRepository;
 import com.sahaware.resysbni.repository.ISqliteRepository;
 import com.sahaware.resysbni.util.Constants;
+import com.sahaware.resysbni.view.activity.LoginActivity;
 import com.sahaware.resysbni.view.custom.CustomCircularImageView;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
+//import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+//import java.io.FileOutputStream;
+//import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
+//import butterknife.OnClick;
 import butterknife.Unbinder;
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
@@ -62,6 +63,7 @@ import cz.msebera.android.httpclient.entity.ByteArrayEntity;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.util.EntityUtils;
 import dmax.dialog.SpotsDialog;
+import info.hoang8f.widget.FButton;
 
 
 public class ProfileFragment extends Fragment {
@@ -85,6 +87,8 @@ public class ProfileFragment extends Fragment {
     TextView txt_image_path;
     @BindView(R.id.user_profile_photo)
     CustomCircularImageView user_profile_photo;
+    @BindView(R.id.btn_logout)
+    FButton loginButton;
     private Unbinder unbinder;
     private boolean isViewShown = false;
     private SpotsDialog progressDialog;
@@ -135,7 +139,7 @@ public class ProfileFragment extends Fragment {
                 txt_profile_point.setText(String.valueOf(dataUser.getPoint()));
                 if (!dataUser.getAvatar().isEmpty()) {
                     Picasso.with(getContext())
-                            .load("http://bni.yapyek.com/Images/Avatar/"+dataUser.getAvatar())
+                            .load(Constants.API_IMAGE_AVATAR_URL+dataUser.getAvatar())
                             .error(R.drawable.profile_user)
                             .into(user_profile_photo);
                 }
@@ -161,6 +165,15 @@ public class ProfileFragment extends Fragment {
                 id_img = user_profile_photo;
                 id_img.setTag("img_submit_location_1");
                 startDialog();
+            }
+        });
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                logout();
+
             }
         });
 
@@ -199,6 +212,16 @@ public class ProfileFragment extends Fragment {
         txt_profile_point.setText(String.valueOf(dataUser.getPoint()));
     }
 
+    public void logout() {
+
+        Log.d(TAG, "Logout");
+        DependencyInjection.Get(ISessionRepository.class).logoutUser();
+        DependencyInjection.Get(ISqliteRepository.class).resetDatabase();
+        Intent intent = new Intent(getContext(),LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        getActivity().finish();
+    }
     @Override public void onDestroyView() {
         super.onDestroyView();
 
