@@ -186,7 +186,8 @@ public class DetailNasabahActivity extends AppCompatActivity {
     }
 
     private void implement(){
-        txt_detail_alamat.setText(Html.fromHtml(Html.fromHtml("&lt;p&gt;&lt;font color=&quot;red&quot; size=&quot;3&quot;&gt;34 hari yang lalu&lt;/font&gt;&lt;/p&gt;").toString()));
+       // txt_detail_alamat.setText(Html.fromHtml(Html.fromHtml("&lt;p&gt;&lt;font color=&quot;red&quot; size=&quot;3&quot;&gt;34 hari yang lalu&lt;/font&gt;&lt;/p&gt;").toString()));
+        txt_detail_alamat.setText(Html.fromHtml(Html.fromHtml(alamat).toString()));
         txt_detail_anggunan.setText(agunan);
         txt_detail_besar_pinjaman.setText(utilRupiah.formatRupiah(jumlah_kredit));
         txt_detail_jenis_kredit.setText(jenis_kredit);
