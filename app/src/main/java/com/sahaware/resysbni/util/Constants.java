@@ -5,7 +5,7 @@ package com.sahaware.resysbni.util;
  */
 public class Constants {
     //public static String ip = "http://"+DependencyInjection.Get(ISessionRepository.class).getIP()+"/sahawareBni";
-    public static final String ip = "http://bni.yapyek.com";
+    public static final String ip = "http://bni.referralsystems.net";
     public static int PRIVATE_MODE = 0;
     public static final String PREF_LOGIN = "LoginSession";
     public static final String PREF_CON = "ConnectionSession";
