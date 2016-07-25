@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -99,7 +100,7 @@ public class DetailNasabahActivity extends AppCompatActivity {
             mMap.addMarker(new MarkerOptions()
                     .position(locUsaha)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.user))
-                    .title("User"));
+                    .title("Lokasi Usaha Nasabah"));
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((locUsaha), 15);
             //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((user), 45));
             mMap.animateCamera(cameraUpdate);
@@ -200,5 +201,26 @@ public class DetailNasabahActivity extends AppCompatActivity {
         txt_detail_sektor_usaha.setText(sektor_usaha);
         txt_detail_tanggal_submit.setText(tanggal);
         txt_detail_status.setText(status);
+        if(status !=null) {
+            if (status.equalsIgnoreCase("open")) {
+                txt_detail_status.setText(status);
+                txt_detail_status.setBackgroundResource(R.drawable.border_open);
+            } else if (status.equalsIgnoreCase("on progress") || status.equalsIgnoreCase("survey")) {
+                txt_detail_status.setText(status);
+                txt_detail_status.setBackgroundResource(R.drawable.border_on_progress);
+            } else if (status.equalsIgnoreCase("closed")) {
+                txt_detail_status.setText(status);
+                txt_detail_status.setBackgroundResource(R.drawable.border_closed);
+            } else if (status.equalsIgnoreCase("approved")) {
+                txt_detail_status.setText(status);
+                txt_detail_status.setBackgroundResource(R.drawable.border_approved);
+            } else if (status.equalsIgnoreCase("rejected")) {
+                txt_detail_status.setText(status);
+                txt_detail_status.setBackgroundResource(R.drawable.border_rejected);
+            } else {
+                txt_detail_status.setText(status);
+            }
+        }
+
     }
 }

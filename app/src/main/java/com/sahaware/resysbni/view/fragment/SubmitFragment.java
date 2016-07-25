@@ -186,7 +186,7 @@ public class SubmitFragment extends Fragment {
     protected static final int CAMERA_REQUEST = 0;
     protected static final int GALLERY_PICTURE = 1;
     private String TAG = "Submit Referral";
-    private double userLat = 0, userLng = 0, jarak;
+    private double userLat = -6.911339, userLng =107.6068856, jarak; //default bandung
     private MapView mMapView;
     private LatLng user, kantor, usaha;
     private DataKantor dataKantorTemp;
@@ -381,7 +381,7 @@ public class SubmitFragment extends Fragment {
             mMap.addMarker(new MarkerOptions()
                         .position(user)
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.user))
-                        .title("User"));
+                        .title("Lokasi Anda"));
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((user), 15);
             //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((user), 45));
             mMap.animateCamera(cameraUpdate);
@@ -520,8 +520,8 @@ public class SubmitFragment extends Fragment {
         LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mTitle.setText("HALAMAN UTAMA");
-        progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
+        mTitle.setText("Form Data Calon Nasabah");
+        progressDialog = new SpotsDialog(getActivity(), "Request data...");
         Resources res = getResources();
 
 
@@ -573,11 +573,13 @@ public class SubmitFragment extends Fragment {
                         // TODO Something
                         layoutJumlah.setVisibility(View.GONE);
                         layoutAgunan.setVisibility(View.GONE);
+                       // str_kantor = "1";// set default untuk jenis EDC dan Lakupandai
                         break;
                     case R.id.rbEDC:
                         // TODO Something
                         layoutJumlah.setVisibility(View.GONE);
                         layoutAgunan.setVisibility(View.GONE);
+                       // str_kantor = "1";// set default id kantor untuk jenis EDC dan Lakupandai
                         break;
                 }
             }
@@ -655,8 +657,8 @@ public class SubmitFragment extends Fragment {
             initMap();
             new MaterialDialog.Builder(getActivity())
                     .backgroundColor(Color.rgb(254, 253, 252))
-                    .title("Cek KTP")
-                    .content("Masukkan nomor KTP")
+                    .title("Cek No KTP")
+                    .content("Masukkan nomor KTP nasabah")
                     .inputType(InputType.TYPE_CLASS_NUMBER)
                     .inputRange(16, 16)
                     .positiveText("Submit")
@@ -672,7 +674,7 @@ public class SubmitFragment extends Fragment {
                     .input("", null, false, new MaterialDialog.InputCallback() {
                         @Override
                         public void onInput(MaterialDialog dialog, CharSequence input) {
-                            progressDialog = new SpotsDialog(getActivity(), "Cek nomor KTP...");
+                            progressDialog = new SpotsDialog(getActivity(), "Cek Nomor KTP...");
                             String ktp = input.toString();
                             progressDialog.show();
                             CheckKTP(ktp);
@@ -790,11 +792,19 @@ public class SubmitFragment extends Fragment {
             edt_submit_lama_usaha.setError("Lama usaha wajib di isi !");
         }else if (rgJenis.getCheckedRadioButtonId()<=0) {
             rbKUR.setError("Jenis Kredit wajib d isi !");
-        }/*else if (str_jumlah_kredit.equals(null)) {
-            edt_submit_kredit_jumlah.setError("Jumlah kredit wajib di isi !");
-        }else if (str_agunan.equals(null)) {
-            edt_submit_kredit_agunan.setError("Agunan wajib di isi !");
-        }*/else {
+        }else if (str_jumlah_kredit.equals(null) || str_jumlah_kredit.equals("") ) {
+            str_jumlah_kredit = "0";
+
+           // edt_submit_kredit_jumlah.setError("Jumlah kredit wajib di isi !");
+        }else if (str_agunan.equals(null)|| str_agunan.equals("")) {
+            str_agunan = "";
+            //edt_submit_kredit_agunan.setError("Agunan wajib di isi !");
+        }
+        else if (str_kantor.equals(null)|| str_kantor.equals("")) {
+            str_kantor = "1"; // set default untuk edc dan laku pandai
+
+        }
+        else {
             Calendar c = Calendar.getInstance();
             Double latUsaha = 0.0;
             Double langUsaha = 0.0;
@@ -810,7 +820,9 @@ public class SubmitFragment extends Fragment {
                     str_lama_usaha, r.getTag().toString() , str_jumlah_kredit, str_agunan,
                     str_kantor, formattedDate
                     , "Open", str_img1, str_img2, latUsaha, langUsaha, sla);
-            DependencyInjection.Get(ISqliteRepository.class).addNasabahTemp(nb);
+
+            //save to local data by zul : tidak perlu simpan ke lokal dulu
+           DependencyInjection.Get(ISqliteRepository.class).addNasabahTemp(nb);
 
             SaveDataNasabah();
         }
@@ -941,15 +953,16 @@ public class SubmitFragment extends Fragment {
     public void SaveDataNasabah() {
         final SpotsDialog progressDialogSave = new SpotsDialog(getActivity(), "Menyimpan Data...");
         progressDialogSave.show();
-        final int DEFAULT_TIMEOUT = 20 * 1000;
+        final int DEFAULT_TIMEOUT = 50 * 1000;
         JSONObject jsonParams = new JSONObject();
         StringEntity entity = null;
+
         try {
             jsonParams.put("Alamat", str_alamat);
             jsonParams.put("Anggunan", str_agunan);
             jsonParams.put("IDKantor", txt_rekomendasi_kantor.getTag());
             jsonParams.put("IDReveral", r.getTag());
-            jsonParams.put("IDUser", DependencyInjection.Get(ISessionRepository.class).getId());
+            JSONObject idUser = jsonParams.put("IDUser", DependencyInjection.Get(ISessionRepository.class).getId());
             jsonParams.put("JmlhKredit", Double.parseDouble(str_jumlah_kredit));
             jsonParams.put("KTP", txt_submit_no_ktp.getText().toString());
             jsonParams.put("LamaUsaha", str_lama_usaha);
@@ -1041,7 +1054,7 @@ public class SubmitFragment extends Fragment {
     public void CheckKTP(final String ktp) {
 
         progressDialog.show();
-        final int DEFAULT_TIMEOUT = 20 * 1000;
+        final int DEFAULT_TIMEOUT = 40 * 1000;
         JSONObject jsonParams = new JSONObject();
         StringEntity entity = null;
         try {
@@ -1093,7 +1106,7 @@ public class SubmitFragment extends Fragment {
                             final JSONObject finalObj = obj;
                             new MaterialDialog.Builder(getActivity())
                                     .backgroundColor(Color.rgb(254, 253, 252))
-                                    .title("Data Tersedia")
+                                    .title("Data Sudah Tersedia")
                                     .content("Nama : " + obj.getString(Constants.KEY_NAMA) + "\n" +
                                             "Status Pinjaman : " + obj.getString(Constants.KEY_NAMA_STATUS))
                                     .positiveText("Detail")
@@ -1164,11 +1177,11 @@ public class SubmitFragment extends Fragment {
                     } else {
                         progressDialog.dismiss();
                         txt_submit_no_ktp.setText(ktp);
-                        Toast.makeText(getActivity(), "KTP belum terdaftar", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "KTP belum terdaftar, silahkan lanjutkan pengisian data nasabah", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     progressDialog.dismiss();
-                    Toast.makeText(getActivity(), "Terjadi kesalahan koneksi, silahkan coba lagi", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Terjadi kesalahan koneksi ke server, silahkan coba lagi", Toast.LENGTH_SHORT).show();
                 }
             }
 

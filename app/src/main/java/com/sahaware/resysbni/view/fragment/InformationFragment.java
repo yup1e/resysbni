@@ -58,7 +58,7 @@ public class InformationFragment extends Fragment implements BaseSliderView.OnSl
         View view = inflater.inflate(R.layout.fragment_information, container, false);
         LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText("Information");
+        mTitle.setText("Halaman Utama");
         sliderShow = (SliderLayout) view.findViewById(R.id.slider);
         entryListSlider();
         loadSlider(view);
@@ -92,11 +92,11 @@ public class InformationFragment extends Fragment implements BaseSliderView.OnSl
 
     public void entryListSlider() {
         listImage = new HashMap<String, String>();
-        listImage.put("Bus Rejeki BNI Mudik", "http://bni.yapyek.com/images/banner/resysbni-baner-1.jpg");
-        listImage.put("Special Promo Ramadhan", "http://bni.yapyek.com/images/banner/resysbni-baner-2.jpg");
-        listImage.put("BNI e-billing", "http://bni.yapyek.com/images/banner/resysbni-baner-3.jpg");
-        listImage.put("BNI Digital Loan", "http://bni.yapyek.com/images/banner/resysbni-baner-4.jpg");
-        listImage.put("BNI Grand Prize", "http://bni.yapyek.com/images/banner/resysbni-baner-5.jpg");
+        listImage.put("Bus Rejeki BNI Mudik", "http://bni.referralsystems.net/images/banner/resysbni-baner-1.jpg");
+        listImage.put("Special Promo Ramadhan", "http://bni.referralsystems.net/images/banner/resysbni-baner-2.jpg");
+        listImage.put("BNI e-billing", "http://bni.referralsystems.net/images/banner/resysbni-baner-3.jpg");
+        listImage.put("BNI Digital Loan", "http://bni.referralsystems.net/images/banner/resysbni-baner-4.jpg");
+        listImage.put("BNI Grand Prize", "http://bni.referralsystems.net/images/banner/resysbni-baner-5.jpg");
     }
 
     public void loadSlider(View view) {
@@ -152,9 +152,9 @@ public class InformationFragment extends Fragment implements BaseSliderView.OnSl
 
     private void initData(){
         DependencyInjection.Get(ISqliteRepository.class).clearInformation();
-        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "KUR", "BNI dapat memberikan pembiayaan kepada usaha anda yang feasible namu masih belum memiliki agunan sesuai persyaratan Bank."));
-        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "EDC", "Pembayaran customer lebih mudah. Customer tidak harus bawa uang Cash/pergi ke ATM dulu untuk ambil uang cash. Tinggal gesek kartu ATM (Debit) atau Kartu Kredit saja maka uang langsung masuk ke rekening pemilik/owner merchant."));
-        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Laku Pandai", "Laku Pandai"));
+        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Kedit Usaha Rakyat", "BNI dapat memberikan pembiayaan kepada usaha anda yang feasible namu masih belum memiliki agunan sesuai persyaratan Bank.  Solusinya adalah dengan Kredit Usaha Rakyat yang dapat diberikan kepada calon debitur Usaha Mikro, Kecil, Menengah, Anggota keluarga dari karyawan/karyawati yang berpenghasilan tetap atau bekerja sebagai Tenaga Kerja Indonesia (TKI) dan TKI yang purna dari bekerja di luar negeri."));
+        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "EDC", "Bisnis Merchant merupakan salah satu aktivitas usaha yang dilakukan oleh Bank dalam upaya memberikan layanan transaksi perbankan kepada nasabahnya dengan cara memasang atau menempatkan EDC dan/atau Imprinter di tempat usaha Merchant. Dalam Bisnis Merchant ini Bank bertindak sebagai Acquiring dari VISA dan MasterCard yang dapat menerima dan memproses Transaksi yang dilakukan dengan menggunakan Kartu Kredit ataupun Kartu Debit."));
+        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Laku Pandai", "Perorangan atau badan hukum yang telah bekerjasama dengan BNI untuk menjadi kepanjangan tangan BNI dalam menyediakan layanan perbankan kepada masyarakat dalam rangka pemerataan layanan perbankan berupa produk tabungan, kredit mikro, asuransi mikro, uang elektronik, pembelian pulsa/voucher dan pembayaran tagihan."));
         populateSampleData();
     }
 

@@ -35,7 +35,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Profil"
+                        android:text="Profil Nasabah"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/white"
@@ -56,7 +56,7 @@
                         android:id="@+id/txt_detail_nama"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Noor Shakato Eka Dhana"
+                        android:text="Nama nasabah"
                         android:textSize="18sp"
                         android:paddingRight="40dp"
                         />
@@ -164,34 +164,6 @@
                         android:layout_marginLeft="5dp"
                         android:layout_span="2"
                         />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="Nama Petugas"
-                        style="@style/detail_title"
-                        />
-                    <TextView
-                        android:id="@+id/txt_detail_nama_user"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="21/05/2016"
-                        android:textSize="18sp"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/grey"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_span="2"/>
                 </TableRow>
                 <TableRow
                     android:layout_width="match_parent"
@@ -321,8 +293,9 @@
                         />
                     <TextView
                         android:id="@+id/txt_detail_status"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@android:color/white"
                         android:text="KUR"
                         android:textSize="18sp"
                         android:layout_gravity="center_vertical"
@@ -345,18 +318,19 @@
                     android:layout_height="wrap_content"
                     >
                     <TextView
-                        android:text="Anggunan"
+                        android:text="Nama Pegawai"
                         style="@style/detail_title"
                         />
                     <TextView
-                        android:id="@+id/txt_detail_anggunan"
+                        android:id="@+id/txt_detail_nama_user"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
+                        android:text="21/05/2016"
                         android:textSize="18sp"
-                        android:text="Mobil BMW Tahun 2016 dan rumah seluas 10 Hektar di daerah setiabudhi"
                         />
                 </TableRow>
+
+
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -367,7 +341,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Usaha"
+                        android:text="Profil Usaha"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/white"
@@ -411,6 +385,35 @@
                     android:layout_height="wrap_content"
                     >
                     <TextView
+                        android:text="Anggunan"
+                        style="@style/detail_title"
+                        />
+                    <TextView
+                        android:id="@+id/txt_detail_anggunan"
+                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:textSize="18sp"
+                        android:text="Mobil BMW Tahun 2016 dan rumah seluas 10 Hektar di daerah setiabudhi"
+                        />
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/grey"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_span="2"/>
+                </TableRow>
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                    <TextView
                         android:text="Lama Usaha"
                         style="@style/detail_title"
                         />
@@ -423,6 +426,7 @@
                         android:layout_weight="1"
                         />
                 </TableRow>
+
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -49,7 +50,7 @@ public class HomeFragment extends Fragment {
     private ListReportAdapter mAdapter;
     private List<DataReport> reportList;
     private SpotsDialog progressDialog;
-
+    private SwipeRefreshLayout swipeRefreshListFragment;
     public HomeFragment() {
        reportList = new ArrayList<>();
     }
@@ -71,10 +72,10 @@ public class HomeFragment extends Fragment {
                 , container, false);
         LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText("AKTIFITAS REFERRAL TERBARU");
+        mTitle.setText("Riwayat Data Referral");
         progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-
+        swipeRefreshListFragment = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshListReport);
         mAdapter = new ListReportAdapter(reportList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -95,6 +96,15 @@ public class HomeFragment extends Fragment {
             }
         }));
 
+        swipeRefreshListFragment.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Refresh items
+                DependencyInjection.Get(ISqliteRepository.class).clearReport();
+                getDataReport();
+            }
+        });
+
         return view;
     }
 
@@ -107,6 +117,7 @@ public class HomeFragment extends Fragment {
                 progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
                 //progressDialog.show();
                 getDataReport();
+               // progressDialog.dismiss();
             }else {
                 showDB();
             }
@@ -242,7 +253,10 @@ public class HomeFragment extends Fragment {
                 } else {
                     Toast.makeText(getActivity(), "Data tidak tersedia !", Toast.LENGTH_SHORT).show();
                 }
-                progressDialog.dismiss();
+                if (progressDialog!=null) {
+                    progressDialog.dismiss();
+                }
+                swipeRefreshListFragment.setRefreshing(false);
                 showDB();
 
             }

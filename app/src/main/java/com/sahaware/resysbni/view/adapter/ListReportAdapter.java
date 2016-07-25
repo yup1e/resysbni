@@ -1,6 +1,7 @@
 package com.sahaware.resysbni.view.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,8 +44,9 @@ public class ListReportAdapter extends RecyclerView.Adapter<ListReportAdapter.My
     public void onBindViewHolder(MyViewHolder holder, int position) {
         DataReport report = reportList.get(position);
         holder.id.setText(String.valueOf(report.getID()));
-        holder.keterangan.setText(report.getKeterangan());
-        holder.waktu.setText(report.getTanggal() + " - " + report.getJam());
+       // holder.keterangan.setText(report.getKeterangan());
+        holder.keterangan.setText(Html.fromHtml(Html.fromHtml(report.getKeterangan()).toString()));
+        holder.waktu.setText(report.getTanggal() + " " + report.getJam());
     }
 
     @Override

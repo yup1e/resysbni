@@ -83,7 +83,7 @@ public class ListFragment extends Fragment {
                 , container, false);
         LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText("LIST NASABAH");
+        mTitle.setText("List Calon Nasabah");
         swipeRefreshListNasabahLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshListNasabahLayout);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         progressDialog = new SpotsDialog(getActivity(), "Mencari data...");

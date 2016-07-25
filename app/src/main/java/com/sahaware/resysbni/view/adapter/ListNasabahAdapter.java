@@ -3,6 +3,7 @@ package com.sahaware.resysbni.view.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,9 +60,11 @@ public class ListNasabahAdapter extends RecyclerView.Adapter<ListNasabahAdapter.
         holder.tanggal.setText(nasabah.getTanggal());
         holder.no_hp.setText(nasabah.getNo_hp());
         holder.no_ktp.setText(nasabah.getNo_ktp());
-        if (!nasabah.getSla().equalsIgnoreCase(null)) {
+        if (nasabah.getSla() != null) {
             holder.sla.setText(Html.fromHtml(Html.fromHtml(nasabah.getSla()).toString()));
         }
+
+
         Picasso.with(context)
                 .load(Constants.API_IMAGE_NASABAH_URL + nasabah.getImg1())
                 .fit()

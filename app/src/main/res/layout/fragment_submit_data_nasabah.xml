@@ -39,8 +39,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="16dp"
-                    android:text="Data Nasabah"
+                    android:text="Profil Nasabah"
                     android:textColor="@color/colorTextPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -51,7 +50,7 @@
                     android:layout_marginBottom="10dp"
                     android:background="@color/colorTextAcceent" />
                 <TextView
-                    android:text="No. KTP"
+                    android:text="No KTP"
                     style="@style/detail_title" />
                 <TextView
                     android:id="@+id/txt_submit_no_ktp"
@@ -93,11 +92,12 @@
                         android:id="@+id/input_submit_alamat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Alamat"
+                        android:hint="Alamat Usaha"
                         android:gravity="top|left"
                         android:inputType="textMultiLine"
                         android:maxLines="5"
-                        android:lines="5"/>
+                        android:maxLength="140"
+                        android:lines="3"/>
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
@@ -110,9 +110,9 @@
                         android:id="@+id/input_submit_nope"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Nomor HP"
+                        android:hint="Nomor Telp/HP"
                         android:inputType="number"
-                        android:maxLength="12"
+                        android:maxLength="15"
                         android:singleLine="true" />
                 </android.support.design.widget.TextInputLayout>
 
@@ -150,29 +150,27 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Kredit"
+                    android:text="Informasi Pengajuan"
                     android:textColor="@color/colorTextPrimary"
                     android:textSize="20sp"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="18dp"
                     android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="16dp"
                     android:textStyle="bold"
                     />
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:background="@color/colorTextAcceent"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="5dp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="16dp"
-                    android:text="Jenis Kredit"
+                     android:text="Jenis Pengajuan"
                     android:textColor="@color/colorTextPrimary"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:layout_marginTop="32dp"/>
+                    android:layout_marginTop="18dp"/>
                 <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -180,8 +178,8 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
                     app:met_floatingLabel="highlight"
-                    app:met_floatingLabelText="Jenis Kredit"
-                    android:hint="Jenis Kredit"
+                    app:met_floatingLabelText="Jenis Pengajuan"
+                    android:hint="Pilih Jenis Pengajuan"
                     android:visibility="gone"/>
 
                 <RadioGroup
@@ -203,15 +201,6 @@
                         android:layout_gravity="center_horizontal"
                         android:checked="true"
                         android:tag="1"/>
-
-                    <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="LakuPandai"
-                        android:id="@+id/rbLakuPandai"
-                        android:layout_gravity="center_horizontal"
-                        android:checked="false"
-                        android:tag="3"/>
                     <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -220,6 +209,15 @@
                         android:layout_gravity="center_horizontal"
                         android:checked="false"
                         android:tag="2"/>
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Laku Pandai"
+                        android:id="@+id/rbLakuPandai"
+                        android:layout_gravity="center_horizontal"
+                        android:checked="false"
+                        android:tag="3"/>
+
                 </RadioGroup>
 
 
@@ -235,7 +233,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="numberSigned"
                         android:digits="1234567890"
-                        android:hint="Jumlah"
+                        android:hint="Jumlah pengajuan kredit"
                         android:singleLine="true"
                         android:maxLength="50"/>
                 </android.support.design.widget.TextInputLayout>
@@ -259,8 +257,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="16dp"
-                    android:text="Lokasi dan foto tempat usaha"
+                    android:text="Lokasi dan Foto Usaha"
                     android:textColor="@color/colorTextPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -317,7 +314,7 @@
                     android:hint="Pilih Kantor"
                     android:visibility="gone"/>
 
-                <TextView
+             <!--   <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -326,12 +323,12 @@
                     android:textColor="@color/colorTextPrimary"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="10dp"/>-->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
-                    android:text="Rekomendasi Kantor"
+                    android:text="Rekomendasi Kantor Pengajuan:"
                     android:textColor="@color/colorTextPrimary"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -350,6 +347,16 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_foto_ktp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="3dp"
+                        android:text="Foto KTP"
+                        android:textColor="@color/colorTextPrimary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="3dp"/>
                     <ImageView
                         android:id="@+id/img_submit_location_1"
                         android:layout_width="150dp"
@@ -360,6 +367,21 @@
                         android:onClick="onClick"
                         android:layout_gravity="left"
                         android:tag="img"
+                        android:layout_alignTop="@+id/tv_foto_ktp"
+
+                        />
+                    <TextView
+                        android:id="@+id/tv_foto_usaha"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="3dp"
+                        android:text="Foto usaha"
+                        android:textColor="@color/colorTextPrimary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="3dp"
+                        android:layout_alignLeft="@+id/tv_foto_ktp"
+                        android:layout_toEndOf="@+id/img_submit_location_2"
                         />
                     <ImageView
                         android:id="@+id/img_submit_location_2"
@@ -371,7 +393,10 @@
                         android:onClick="onClick"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
-                        android:tag="img"/>
+                        android:tag="img"
+                        android:layout_alignTop="@+id/tv_foto_usaha"
+
+                        />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -402,8 +427,6 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginBottom="16dp"/>
-
-
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>

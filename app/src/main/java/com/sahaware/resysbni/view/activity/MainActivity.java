@@ -79,9 +79,9 @@ public class MainActivity extends AppCompatActivity {
                 switch (position){
                     case 0:
                         DependencyInjection.Get(ISqliteRepository.class).clearInformation();
-                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "KUR", "BNI dapat memberikan pembiayaan kepada usaha anda yang feasible namu masih belum memiliki agunan sesuai persyaratan Bank."));
-                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "EDC", "Pembayaran customer lebih mudah. Customer tidak harus bawa uang Cash/pergi ke ATM dulu untuk ambil uang cash. Tinggal gesek kartu ATM (Debit) atau Kartu Kredit saja maka uang langsung masuk ke rekening pemilik/owner merchant."));
-                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Laku Pandai", "Laku Pandai"));
+                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Kedit Usaha Rakyat", "BNI dapat memberikan pembiayaan kepada usaha anda yang feasible namu masih belum memiliki agunan sesuai persyaratan Bank.  Solusinya adalah dengan Kredit Usaha Rakyat yang dapat diberikan kepada calon debitur Usaha Mikro, Kecil, Menengah, Anggota keluarga dari karyawan/karyawati yang berpenghasilan tetap atau bekerja sebagai Tenaga Kerja Indonesia (TKI) dan TKI yang purna dari bekerja di luar negeri."));
+                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "EDC", "Bisnis Merchant merupakan salah satu aktivitas usaha yang dilakukan oleh Bank dalam upaya memberikan layanan transaksi perbankan kepada nasabahnya dengan cara memasang atau menempatkan EDC dan/atau Imprinter di tempat usaha Merchant. Dalam Bisnis Merchant ini Bank bertindak sebagai Acquiring dari VISA dan MasterCard yang dapat menerima dan memproses Transaksi yang dilakukan dengan menggunakan Kartu Kredit ataupun Kartu Debit."));
+                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Laku Pandai", "Perorangan atau badan hukum yang telah bekerjasama dengan BNI untuk menjadi kepanjangan tangan BNI dalam menyediakan layanan perbankan kepada masyarakat dalam rangka pemerataan layanan perbankan berupa produk tabungan, kredit mikro, asuransi mikro, uang elektronik, pembelian pulsa/voucher dan pembayaran tagihan."));
                         break;
 
                     case 1:
@@ -230,13 +230,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle("Exit")
-                .setMessage("Are you sure you want to exit?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setMessage("Apakah anda yakin keluar dari aplikasi?")
+                .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
                     }
-                }).setNegativeButton("No", null).show();
+                }).setNegativeButton("Tidak", null).show();
     }
 
     public void getNasabah() {

@@ -117,7 +117,7 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText("PROFILE AGENT");
+        mTitle.setText("Profil Pegawai");
         progressDialog = new SpotsDialog(getActivity());
         //TextView txt_profile_nama = ButterKnife.findById(view, R.id.txt_profile_nama);
         ButterKnife.bind(this, view);
