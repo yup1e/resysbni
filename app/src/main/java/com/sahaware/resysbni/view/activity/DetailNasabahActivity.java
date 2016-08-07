@@ -1,12 +1,19 @@
 package com.sahaware.resysbni.view.activity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,7 +76,7 @@ public class DetailNasabahActivity extends AppCompatActivity {
     private MarkerOptions markerOptions;
     private String tanggal, nama, agunan, jumlah_kredit, alamat, no_hp, namaUser, status,
             lama_usaha, kantor, jenis_kredit, no_ktp, sektor_usaha, img1, img2;
-    private String lat, lang;
+    private Double lat, lang;
     public UtilityRupiahString utilRupiah;
 
     @Override
@@ -168,17 +175,17 @@ public class DetailNasabahActivity extends AppCompatActivity {
         sektor_usaha = bundle.getString(Constants.KEY_SEKTOR_USAHA);
         img1 = bundle.getString(Constants.KEY_IMAGE_1);
         img2 = bundle.getString(Constants.KEY_IMAGE_2);
-        lat = bundle.getString(Constants.KEY_LAT);
-        lang = bundle.getString(Constants.KEY_LONG);
-        locUsaha = new LatLng(Double.parseDouble(lat), Double.parseDouble(lang));
+        lat = bundle.getDouble(Constants.KEY_LAT);
+        lang = bundle.getDouble(Constants.KEY_LONG);
+        locUsaha = new LatLng(lat, lang);
 
-        if (!img1.isEmpty()) {
+        if (img1 != null) {
             Picasso.with(this)
                     .load(Constants.API_IMAGE_NASABAH_URL + img1)
                     .error(R.drawable.profile_user)
                     .into(img_submit_location_1);
         }
-        if (!img2.isEmpty()) {
+        if (img2 != null) {
             Picasso.with(this)
                     .load(Constants.API_IMAGE_NASABAH_URL + img2)
                     .error(R.drawable.profile_user)

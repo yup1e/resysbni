@@ -32,6 +32,7 @@ public interface ISqliteRepository {
     List<DataGeneralInformation> getAllInformation();
     DataUser getDetailUser();
     int getContactsCount();
+    boolean isGeneralInformationEmpty();
     boolean isMasterKantorEmpty();
     boolean isDataNasabahEmpty();
     boolean isDataReportEmpty();

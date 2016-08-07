@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.info_icon_tab};
     private String TAG = "MainActivity";
     private SpotsDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,21 +74,21 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
 
-        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                switch (position){
+                switch (position) {
                     case 0:
-                        DependencyInjection.Get(ISqliteRepository.class).clearInformation();
+                        if (DependencyInjection.Get(ISqliteRepository.class).isGeneralInformationEmpty())
+                            getGeneralInformation();
+                      /*  DependencyInjection.Get(ISqliteRepository.class).clearInformation();
                         DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Kedit Usaha Rakyat", "BNI dapat memberikan pembiayaan kepada usaha anda yang feasible namu masih belum memiliki agunan sesuai persyaratan Bank.  Solusinya adalah dengan Kredit Usaha Rakyat yang dapat diberikan kepada calon debitur Usaha Mikro, Kecil, Menengah, Anggota keluarga dari karyawan/karyawati yang berpenghasilan tetap atau bekerja sebagai Tenaga Kerja Indonesia (TKI) dan TKI yang purna dari bekerja di luar negeri."));
                         DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "EDC", "Bisnis Merchant merupakan salah satu aktivitas usaha yang dilakukan oleh Bank dalam upaya memberikan layanan transaksi perbankan kepada nasabahnya dengan cara memasang atau menempatkan EDC dan/atau Imprinter di tempat usaha Merchant. Dalam Bisnis Merchant ini Bank bertindak sebagai Acquiring dari VISA dan MasterCard yang dapat menerima dan memproses Transaksi yang dilakukan dengan menggunakan Kartu Kredit ataupun Kartu Debit."));
-                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Laku Pandai", "Perorangan atau badan hukum yang telah bekerjasama dengan BNI untuk menjadi kepanjangan tangan BNI dalam menyediakan layanan perbankan kepada masyarakat dalam rangka pemerataan layanan perbankan berupa produk tabungan, kredit mikro, asuransi mikro, uang elektronik, pembelian pulsa/voucher dan pembayaran tagihan."));
+                        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Laku Pandai", "Perorangan atau badan hukum yang telah bekerjasama dengan BNI untuk menjadi kepanjangan tangan BNI dalam menyediakan layanan perbankan kepada masyarakat dalam rangka pemerataan layanan perbankan berupa produk tabungan, kredit mikro, asuransi mikro, uang elektronik, pembelian pulsa/voucher dan pembayaran tagihan."));*/
                         break;
-
                     case 1:
-                        if(DependencyInjection.Get(ISqliteRepository.class).isDataNasabahEmpty())
+                        if (DependencyInjection.Get(ISqliteRepository.class).isDataNasabahEmpty())
                             getNasabah();
-
                         break;
                     case 3:
                         getDataUser();
@@ -145,6 +146,87 @@ public class MainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return null;
         }
+    }
+
+    public void getGeneralInformation() {
+        final int DEFAULT_TIMEOUT = 20 * 1000;
+        JSONObject jsonParams = new JSONObject();
+        StringEntity entity = null;
+        int page = 1, pageSize = 10;
+        try {
+            jsonParams.put("page", page);
+            jsonParams.put("pageSize", pageSize);
+            jsonParams.put("token", DependencyInjection.Get(ISessionRepository.class).getToken());
+            entity = new StringEntity(jsonParams.toString());
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.setTimeout(DEFAULT_TIMEOUT);
+        client.setConnectTimeout(DEFAULT_TIMEOUT);
+        client.setResponseTimeout(DEFAULT_TIMEOUT);
+        client.post(MainActivity.this, Constants.API_GET_ALL_GENERAL_INFORMATION, entity, "application/json", new JsonHttpResponseHandler() {
+
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, JSONObject response) {
+                JSONObject data, status;
+                JSONArray listInformation = null;
+
+                try {
+                    status = response.getJSONObject("status");
+                    if (status.getInt("code") == 200) {
+                        listInformation = response.getJSONArray("listObj");
+                    } else {
+                        Toast.makeText(MainActivity.this, status.getString("description"), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (listInformation != null) {
+                    DependencyInjection.Get(ISqliteRepository.class).clearReport();
+                    for (int i = 0; i < listInformation.length(); i++) {
+                        try {
+                            data = listInformation.getJSONObject(i);
+                            String deskripsi = data.getString("deskripsi");
+                            Integer id = data.getInt("id");
+                            Integer idJenis = data.getInt("idJenisGeneral");
+                            String image = data.getString("image");
+                            String judul = data.getString("judul");
+                            String namaJenis = data.getString("namaJenisGeneral");
+                            Integer orderby = data.getInt("orderby");
+
+                            DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation(namaJenis, judul, deskripsi));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "Data tidak tersedia !", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.Throwable throwable, JSONObject errorResponse) {
+                Log.d("ListFragment", "onFailure: " + String.valueOf(statusCode));
+                Log.d("ListFragment", "onFailure: " + headers);
+                Log.d("ListFragment", "onFailure: " + throwable);
+                Log.d("ListFragment", "onFailure: " + errorResponse);
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+            }
+        });
     }
 
     public void getDataUser() {
@@ -215,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.Throwable throwable, JSONObject errorResponse) {
-                if(statusCode==0) {
+                if (statusCode == 0) {
                     Toast.makeText(MainActivity.this, "Gagal Terkoneksi ke server. (Internet Mati)", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -279,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
                     if (status.getInt("code") == 200) {
                         listNasabah = response.getJSONArray("listObj");
                     } else {
-                        Toast.makeText(MainActivity.this, "Peringatan: Pengguna lain dengan nama pengguna yang sama ("+DependencyInjection.Get(ISessionRepository.class).getUsername()+") sudah login perangkat lain, silakan log out.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Peringatan: Pengguna lain dengan nama pengguna yang sama (" + DependencyInjection.Get(ISessionRepository.class).getUsername() + ") sudah login perangkat lain, silakan log out.", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -328,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(MainActivity.this, "Data tidak tersedia !", Toast.LENGTH_SHORT).show();
                 }
-                if (progressDialog!=null) {
+                if (progressDialog != null) {
                     progressDialog.dismiss();
                 }
             }

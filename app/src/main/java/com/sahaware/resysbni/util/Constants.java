@@ -33,6 +33,7 @@ public class Constants {
     public static final String API_GET_REPORT =  ip + "/servicesreveral/get_all_Report";
     public static final String API_SAVE_AVATAR_USER =  ip + "/servicesreveral/upload_image_avatar/";
     public static final String API_SAVE_IMAGE_NASABAH =  ip + "/servicesreveral/upload_image_nasabah/";
+    public static final String API_GET_ALL_GENERAL_INFORMATION = ip + "/servicesreveral/get_all_general_informasi";
     public static final String API_IMAGE_NASABAH_URL = ip + "/Images/imageNasabah/";
     public static final String API_IMAGE_AVATAR_URL = ip + "/Images/Avatar/";
     //var Data Nasabah dari oop

@@ -27,7 +27,7 @@ public class SplashActivity extends AppCompatActivity {
     @BindView(R.id.tv_splash_status)
     TextView tv_splash_status;
     private UtilityImageByte util;
-    private static int SPLASH_TIME_OUT = 3000;
+    private static int SPLASH_TIME_OUT = 2000;
 
 
     @Override

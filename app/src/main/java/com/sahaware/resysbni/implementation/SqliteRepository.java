@@ -626,6 +626,21 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
         return cursor.getCount();
     }
 
+    public boolean isGeneralInformationEmpty() {
+        boolean flag;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        String count = "SELECT count(*) FROM " + TABLE_INFORMATION;
+        Cursor mcursor = db.rawQuery(count, null);
+        mcursor.moveToFirst();
+        int icount = mcursor.getInt(0);
+        if (icount > 0)
+            flag = false;
+        else
+            flag = true;
+        return flag;
+    }
+
     public boolean isDataNasabahEmpty() {
         boolean flag;
 

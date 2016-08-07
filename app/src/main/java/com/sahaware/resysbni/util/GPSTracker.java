@@ -215,17 +215,17 @@ public class GPSTracker extends Service {
         });
 
         // On pressing the cancel button
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+
 
         // Showing Alert Message
         alertDialog.show();
     }
 
-
+    /*   alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });*/
     @Override
     public IBinder onBind(Intent arg0) {
         return null;

@@ -112,7 +112,6 @@ import info.hoang8f.widget.FButton;
 
 public class SubmitFragment extends Fragment {
 
-
     @BindView(R.id.txt_submit_no_ktp)
     TextView txt_submit_no_ktp;
     @BindView(R.id.input_submit_nama)
@@ -186,7 +185,7 @@ public class SubmitFragment extends Fragment {
     protected static final int CAMERA_REQUEST = 0;
     protected static final int GALLERY_PICTURE = 1;
     private String TAG = "Submit Referral";
-    private double userLat = -6.911339, userLng =107.6068856, jarak; //default bandung
+    private double userLat = -6.911339, userLng = 107.6068856, jarak; //default bandung
     private MapView mMapView;
     private LatLng user, kantor, usaha;
     private DataKantor dataKantorTemp;
@@ -206,6 +205,7 @@ public class SubmitFragment extends Fragment {
     RadioButton r;
     int idNasabah;
     boolean statusSent = false, statusresult = false;
+
     public SubmitFragment() {
         listKantorRadius = new ArrayList<>();
         listJenis = new ArrayList<>();
@@ -323,6 +323,8 @@ public class SubmitFragment extends Fragment {
         if (mMap != null) {
             mMap.setMyLocationEnabled(true);
 
+           // Toast.makeText(getContext(), listKantor.size() + "", Toast.LENGTH_LONG).show();
+
             if (listKantor != null) {
                 for (DataKantor dataKantor : listKantor) {
                     double xDiff = userLat - Double.parseDouble(dataKantor.getLan());
@@ -333,8 +335,13 @@ public class SubmitFragment extends Fragment {
                     //INI RUMUS EUCLIDIAN DISTANCE UNTUK MENENTUKAN JARAK
                     jarak = Math.sqrt(xSqr + ySqr);
                     jarak = jarak * 111.11;
+                    if (jarakTerdekat > jarak) {
+                        jarakTerdekat = jarak;
+                        namaKantor = dataKantor.getNama();
+                        dataKantorTerdekat = dataKantor;
+                    }
                     dataKantor.setJarak(String.valueOf(new DecimalFormat("##").format(jarak)));
-                    if (!dataKantor.getJenisKantor().equalsIgnoreCase("UMUM") && jarak <= 10){
+                    if (!dataKantor.getJenisKantor().equalsIgnoreCase("UMUM") && jarak <= 10) {
                         //String jarakStr = String.valueOf(new DecimalFormat("##").format(jarak));
                         listKantorRadius.add(dataKantor);
                         mMap.addMarker(new MarkerOptions()
@@ -377,145 +384,18 @@ public class SubmitFragment extends Fragment {
                     circle.setVisible(true);
                 }
             }
+            txt_rekomendasi_kantor.setText(namaKantor);
+            txt_rekomendasi_kantor.setTag(dataKantorTerdekat.getIDKantor());
 
             mMap.addMarker(new MarkerOptions()
-                        .position(user)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.user))
-                        .title("Lokasi Anda"));
+                    .position(user)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.user))
+                    .title("Lokasi Anda"));
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((user), 15);
             //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((user), 45));
             mMap.animateCamera(cameraUpdate);
-
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng latLng) {
-                    double jarakTemp = 99999, jarakTerdekat = 99999;
-                    usaha = latLng;
-                    mMap.clear();
-                    listKantorRadius.clear();
-                    mMap.addMarker(new MarkerOptions()
-                            .position(user)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.user))
-                            .title("User"));
-                    if (listKantor != null) {
-                        for (DataKantor dataKantor : listKantor) {
-                            double xDiff = usaha.latitude - Double.parseDouble(dataKantor.getLan());
-                            double xSqr = Math.pow(xDiff, 2);
-
-                            double yDiff = usaha.longitude - Double.parseDouble(dataKantor.getLon());
-                            double ySqr = Math.pow(yDiff, 2);
-                            //INI RUMUS EUCLIDIAN DISTANCE UNTUK MENENTUKAN JARAK
-                            jarak = Math.sqrt(xSqr + ySqr);
-                            jarak = jarak * 111.11;
-                            Log.d(TAG, "jarak: >>>>>>>>>>>"+jarak + " - " + dataKantor.getNama());
-                            if (jarakTerdekat < jarak) {
-
-                            } else {
-                                jarakTerdekat = jarak;
-                                namaKantor = dataKantor.getNama();
-                                dataKantorTerdekat = dataKantor;
-
-                            }
-                            if (!dataKantor.getJenisKantor().equalsIgnoreCase("UMUM") && jarak <= 10){
-                                dataKantor.setJarak(String.valueOf(new DecimalFormat("##").format(jarak)));
-                                //String jarakStr = String.valueOf(new DecimalFormat("##").format(jarak));
-                                listKantorRadius.add(dataKantor);
-                                mMap.addMarker(new MarkerOptions()
-                                        .position(new LatLng(Double.parseDouble(dataKantor.getLan()), Double.parseDouble(dataKantor.getLon())))
-                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.kantor))
-                                        .title(dataKantor.getNama() + " " + String.valueOf(new DecimalFormat("##").format(jarak)) + " KM")
-                                        .snippet(dataKantor.getAlamat()));
-                                Circle circle = mMap.addCircle(new CircleOptions()
-                                        .center(user)
-                                        .radius(50 * 1000)
-                                        .strokeWidth(1)
-                                        .strokeColor(Color.RED)
-                                        .fillColor(Color.argb(10, 220, 237, 200)));
-                                circle.setVisible(true);
-                                //http://stackoverflow.com/questions/14326482/android-maps-v2-polygon-transparency
-                            } else if (listKantorRadius.isEmpty() && dataKantor.getJenisKantor().equalsIgnoreCase("skc")) {
-
-                                if (jarakTemp < jarak) {
-
-
-                                } else {
-                                    jarakTemp = jarak;
-                                    dataKantorTemp = dataKantor;
-                                }
-
-
-                            }
-                        }
-
-                        if (dataKantorTemp != null) {
-                            listKantorRadius.add(dataKantorTemp);
-                            mMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(Double.parseDouble(dataKantorTemp.getLan()), Double.parseDouble(dataKantorTemp.getLon())))
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.kantor))
-                                    .title(dataKantorTemp.getNama() + " " + String.valueOf(new DecimalFormat("##").format(jarak)) + " KM")
-                                    .snippet(dataKantorTemp.getAlamat()));
-                            Circle circle = mMap.addCircle(new CircleOptions()
-                                    .center(user)
-                                    .radius(50 * 1000)
-                                    .strokeWidth(1)
-                                    .strokeColor(Color.RED)
-                                    .fillColor(Color.argb(10, 220, 237, 200)));
-                            circle.setVisible(true);
-                        }
-                    }
-                    txt_rekomendasi_kantor.setText(namaKantor);
-                    txt_rekomendasi_kantor.setTag(dataKantorTerdekat.getIDKantor());
-                    mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(Double.parseDouble(dataKantorTerdekat.getLan()), Double.parseDouble(dataKantorTerdekat.getLon())))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.kantor))
-                            .title(dataKantorTerdekat.getNama() + " " + String.valueOf(new DecimalFormat("##").format(jarak)) + " KM")
-                            .snippet(dataKantorTerdekat.getAlamat()));
-                    Circle circle = mMap.addCircle(new CircleOptions()
-                            .center(user)
-                            .radius(50 * 1000)
-                            .strokeWidth(1)
-                            .strokeColor(Color.RED)
-                            .fillColor(Color.argb(10, 220, 237, 200)));
-                    circle.setVisible(true);
-                    markerOptions = new MarkerOptions();
-                    // Setting the position for the marker
-                    markerOptions.position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.nasabah));
-                    // Placing a marker on the touched position
-                    mMap.addMarker(markerOptions);
-                    adapterKantor.notifyDataSetChanged();
-                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((latLng), 15));
-                    //mMap.animateCamera(CameraUpdateFactory.zoomTo(12), 2000, null);
-
-                    // Adding Marker on the touched location with address
-                    new ReverseGeocodingTask(getContext()).execute(latLng);
-
-                }
-            });
-            /*mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
-                @Override
-                public void onMapClick(LatLng latLng) {
-                    MarkerOptions markerOptions = new MarkerOptions();
-
-                    // Setting the position for the marker
-                    markerOptions.position(latLng);
-
-                    // Setting the title for the marker.
-                    // This will be displayed on taping the marker
-                    markerOptions.title(latLng.latitude + " : " + latLng.longitude);
-
-                    // Clears the previously touched position
-                    mMap.clear();
-
-                    // Animating to the touched position
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-
-                    // Placing a marker on the touched position
-                    mMap.addMarker(markerOptions);
-                }
-
-            });*/
-
+            // Adding Marker on the touched location with address
+            new ReverseGeocodingTask(getContext()).execute(user);
         }
         LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
@@ -557,13 +437,10 @@ public class SubmitFragment extends Fragment {
         spn_kantor.setOnItemClickListener(listenerKantor);
         util = new UtilityImageByte();
 
-        rgJenis.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        rgJenis.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId)
-            {
-                switch(checkedId)
-                {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
                     case R.id.rbKUR:
                         // TODO Something
                         layoutJumlah.setVisibility(View.VISIBLE);
@@ -573,13 +450,13 @@ public class SubmitFragment extends Fragment {
                         // TODO Something
                         layoutJumlah.setVisibility(View.GONE);
                         layoutAgunan.setVisibility(View.GONE);
-                       // str_kantor = "1";// set default untuk jenis EDC dan Lakupandai
+                        // str_kantor = "1";// set default untuk jenis EDC dan Lakupandai
                         break;
                     case R.id.rbEDC:
                         // TODO Something
                         layoutJumlah.setVisibility(View.GONE);
                         layoutAgunan.setVisibility(View.GONE);
-                       // str_kantor = "1";// set default id kantor untuk jenis EDC dan Lakupandai
+                        // str_kantor = "1";// set default id kantor untuk jenis EDC dan Lakupandai
                         break;
                 }
             }
@@ -653,8 +530,9 @@ public class SubmitFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
 
+        initMap();
+
         if (isVisibleToUser) {
-            initMap();
             new MaterialDialog.Builder(getActivity())
                     .backgroundColor(Color.rgb(254, 253, 252))
                     .title("Cek No KTP")
@@ -711,7 +589,7 @@ public class SubmitFragment extends Fragment {
         Intent cameraIntent;
         switch (view.getId()) {
             case R.id.img_submit_location_1:
-                if((ContextCompat.checkSelfPermission(getActivity(),
+                if ((ContextCompat.checkSelfPermission(getActivity(),
                         Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
                         || (ContextCompat.checkSelfPermission(getActivity(),
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED))
@@ -721,14 +599,14 @@ public class SubmitFragment extends Fragment {
                             (getActivity(), new String[]{
                                     Manifest.permission.READ_EXTERNAL_STORAGE,
                                     Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            },MY_PERMISSIONS_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
+                            }, MY_PERMISSIONS_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
                 }
                 id_img = img_submit_location_1;
                 id_img.setTag("img_submit_location_1");
                 startDialog();
                 break;
             case R.id.img_submit_location_2:
-                if((ContextCompat.checkSelfPermission(getActivity(),
+                if ((ContextCompat.checkSelfPermission(getActivity(),
                         Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
                         || (ContextCompat.checkSelfPermission(getActivity(),
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED))
@@ -738,7 +616,7 @@ public class SubmitFragment extends Fragment {
                             (getActivity(), new String[]{
                                     Manifest.permission.READ_EXTERNAL_STORAGE,
                                     Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            },MY_PERMISSIONS_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
+                            }, MY_PERMISSIONS_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE);
                 }
                 id_img = img_submit_location_2;
                 id_img.setTag("img_submit_location_2");
@@ -748,7 +626,7 @@ public class SubmitFragment extends Fragment {
                 btn_submit_data_nasabah.setEnabled(false);
 
                 //new AddImageTask().execute();
-                 InitValue();
+                InitValue();
                 break;
         }
     }
@@ -769,7 +647,7 @@ public class SubmitFragment extends Fragment {
         RadioBtnId = rgJenis.getCheckedRadioButtonId();
         View radioButton = rgJenis.findViewById(RadioBtnId);
         int idx = rgJenis.indexOfChild(radioButton);
-        r = (RadioButton)rgJenis.getChildAt(idx);
+        r = (RadioButton) rgJenis.getChildAt(idx);
         if (img_submit_location_1.getTag().toString().equalsIgnoreCase("img"))
             str_img1 = null;
         else
@@ -782,47 +660,45 @@ public class SubmitFragment extends Fragment {
 
         if (str_nama.equals(null)) {
             edt_submit_nama.setError("Nama wajib di isi !");
-        }else if (str_alamat.equals(null)) {
+        } else if (str_alamat.equals(null)) {
             edt_submit_alamat.setError("Alamat wajib di isi !");
-        }else if (str_no_hp.equals(null)) {
+        } else if (str_no_hp.equals(null)) {
             edt_submit_nope.setError("No. HP wajib di isi !");
-        }else if (str_sektor_usaha.equals(null)) {
+        } else if (str_sektor_usaha.equals(null)) {
             edt_submit_sektor_usaha.setError("Sektor usaha wajib di isi !");
-        }else if (str_lama_usaha.equals(null)) {
+        } else if (str_lama_usaha.equals(null)) {
             edt_submit_lama_usaha.setError("Lama usaha wajib di isi !");
-        }else if (rgJenis.getCheckedRadioButtonId()<=0) {
+        } else if (rgJenis.getCheckedRadioButtonId() <= 0) {
             rbKUR.setError("Jenis Kredit wajib d isi !");
-        }else if (str_jumlah_kredit.equals(null) || str_jumlah_kredit.equals("") ) {
+        } else if (str_jumlah_kredit.equals(null) || str_jumlah_kredit.equals("")) {
             str_jumlah_kredit = "0";
 
-           // edt_submit_kredit_jumlah.setError("Jumlah kredit wajib di isi !");
-        }else if (str_agunan.equals(null)|| str_agunan.equals("")) {
+            // edt_submit_kredit_jumlah.setError("Jumlah kredit wajib di isi !");
+        } else if (str_agunan.equals(null) || str_agunan.equals("")) {
             str_agunan = "";
             //edt_submit_kredit_agunan.setError("Agunan wajib di isi !");
-        }
-        else if (str_kantor.equals(null)|| str_kantor.equals("")) {
+        } else if (str_kantor.equals(null) || str_kantor.equals("")) {
             str_kantor = "1"; // set default untuk edc dan laku pandai
 
-        }
-        else {
+        } else {
             Calendar c = Calendar.getInstance();
             Double latUsaha = 0.0;
             Double langUsaha = 0.0;
-            if (!Double.isNaN(usaha.latitude)){
+            if (!Double.isNaN(usaha.latitude)) {
                 latUsaha = usaha.latitude;
             }
-            if (!Double.isNaN(usaha.longitude)){
+            if (!Double.isNaN(usaha.longitude)) {
                 langUsaha = usaha.longitude;
             }
             SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
             String formattedDate = df.format(c.getTime());
             NasabahEntity nb = new NasabahEntity(str_no_ktp, str_nama, str_alamat, str_no_hp, str_sektor_usaha,
-                    str_lama_usaha, r.getTag().toString() , str_jumlah_kredit, str_agunan,
+                    str_lama_usaha, r.getTag().toString(), str_jumlah_kredit, str_agunan,
                     str_kantor, formattedDate
                     , "Open", str_img1, str_img2, latUsaha, langUsaha, sla);
 
             //save to local data by zul : tidak perlu simpan ke lokal dulu
-           DependencyInjection.Get(ISqliteRepository.class).addNasabahTemp(nb);
+            DependencyInjection.Get(ISqliteRepository.class).addNasabahTemp(nb);
 
             SaveDataNasabah();
         }
@@ -923,7 +799,7 @@ public class SubmitFragment extends Fragment {
                 int columnIndex = c.getColumnIndex(filePath[0]);
                 selectedImagePath = c.getString(columnIndex);
                 c.close();
-                File f= new File(selectedImagePath);
+                File f = new File(selectedImagePath);
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inPreferredConfig = Bitmap.Config.ARGB_8888;
                 try {
@@ -1076,7 +952,7 @@ public class SubmitFragment extends Fragment {
 
             @Override
             public void onStart() {
-                if(progressDialog!=null)
+                if (progressDialog != null)
                     progressDialog.dismiss();
             }
 
@@ -1221,7 +1097,7 @@ public class SubmitFragment extends Fragment {
     private class ReverseGeocodingTask extends AsyncTask<LatLng, Void, String> {
         Context mContext;
 
-        public ReverseGeocodingTask(Context context){
+        public ReverseGeocodingTask(Context context) {
             super();
             mContext = context;
         }
@@ -1234,15 +1110,15 @@ public class SubmitFragment extends Fragment {
             double longitude = params[0].longitude;
 
             List<Address> addresses = null;
-            String addressText="";
+            String addressText = "";
 
             try {
-                addresses = geocoder.getFromLocation(latitude, longitude,1);
+                addresses = geocoder.getFromLocation(latitude, longitude, 1);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            if(addresses != null && addresses.size() > 0 ){
+            if (addresses != null && addresses.size() > 0) {
                 Address address = addresses.get(0);
 
                 addressText = String.format("%s, %s, %s",
@@ -1258,17 +1134,17 @@ public class SubmitFragment extends Fragment {
         protected void onPostExecute(String addressText) {
             // Setting the title for the marker.
             // This will be displayed on taping the marker
-            markerOptions.title(addressText);
+            //markerOptions.title(addressText);
 
             // Placing a marker on the touched position
-            mMap.addMarker(markerOptions);
+            //mMap.addMarker(markerOptions);
             txt_address_marker.setText(addressText);
 
         }
     }
 
 
-    public  String httpPostFile(byte[] file, String url) throws Exception {
+    public String httpPostFile(byte[] file, String url) throws Exception {
         System.out.println("Start Connection " + url);
 
         HttpClient httpclient = new DefaultHttpClient();
@@ -1292,17 +1168,18 @@ public class SubmitFragment extends Fragment {
         public String dataResult = "";
         public Bitmap bPhoto;
         //String poiId = "";
-        File file ;
+        File file;
 
-        public AddImageTask()
-        {
+        public AddImageTask() {
             if (!statusSent) {
                 file = new File(img_submit_location_1.getTag().toString());
-            }else {
+            } else {
                 file = new File(img_submit_location_2.getTag().toString());
             }
         }
+
         private ProgressDialog pDialog;
+
         @Override
         protected void onPreExecute() {
            /* dialog = ProgressDialog.show(activity, "", "Insert Image", true,
@@ -1330,7 +1207,8 @@ public class SubmitFragment extends Fragment {
                 try {
                     FileInputStream fis = new FileInputStream(this.file);
                     bPhoto = BitmapFactory.decodeStream(fis);
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                }
                 if (bPhoto != null) {
                     bPhoto.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     bPhoto.recycle();
@@ -1343,8 +1221,8 @@ public class SubmitFragment extends Fragment {
                             Constants.API_SAVE_IMAGE_NASABAH + token + "/" + idNasabah);
                     //"http://bni.yapyek.com/servicesreveral/upload_image_nasabah/"+token+"/"+id);
                     //"http://bni.yapyek.com/servicesreveral/upload_image_avatar/"+token+"/"+id);
-                    Log.d("response",dataResult);
-                    JSONObject dataUser = null, status, result=null;
+                    Log.d("response", dataResult);
+                    JSONObject dataUser = null, status, result = null;
                     result = new JSONObject(dataResult);
                     int point;
                     try {
@@ -1360,7 +1238,7 @@ public class SubmitFragment extends Fragment {
                     if (dataUser != null) {
                         try {
                             String image = dataUser.getString("image");
-                            if (statusSent){
+                            if (statusSent) {
                                 statusresult = true;
                             }
                             statusSent = true;
@@ -1395,15 +1273,14 @@ public class SubmitFragment extends Fragment {
                 } catch (Exception e) {
 
                 }
-            } else
-            {
+            } else {
                 Log.d(TAG, "Dataresult: kosong");
 
             }
             progressDialog.dismiss();
-            if (!statusresult){
+            if (!statusresult) {
                 new AddImageTask().execute();
-            }else if (statusresult){
+            } else if (statusresult) {
                 btn_submit_data_nasabah.setEnabled(true);
                 DependencyInjection.Get(ISqliteRepository.class).clearNasabah();
                 DependencyInjection.Get(ISqliteRepository.class).clearNasabahTemp();

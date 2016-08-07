@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,7 +67,7 @@ public class ListInformationAdapter extends RecyclerView.Adapter<ListInformation
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         DataGeneralInformation item = informationList.get(position);
         holder.textView.setText(item.getTitle());
-        holder.description.setText(item.getDescription());
+        holder.description.setText(Html.fromHtml(Html.fromHtml(item.getDescription()).toString()));
         holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.cardview_light_background));
         holder.expandableLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.cardview_dark_background));
         holder.expandableLayout.setInterpolator(Utils.createInterpolator(Utils.DECELERATE_INTERPOLATOR));

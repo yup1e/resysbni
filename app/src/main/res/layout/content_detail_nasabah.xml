@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -16,529 +16,536 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <LinearLayout
+
+        <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:shrinkColumns="*"
+            android:stretchColumns="*">
 
-            <TableLayout
+            <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:shrinkColumns="*"
-                android:stretchColumns="*">
-                <TableRow
-                    android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:background="@color/colorAccent">
+
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorAccent"
                     android:layout_marginBottom="10dp"
-                    >
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Profil Nasabah"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_span="2"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:text="Profil Nasabah"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/detail_title"
+                    android:text="Nama " />
+
+                <TextView
+                    android:id="@+id/txt_detail_nama"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="Nama "
-                        style="@style/detail_title" />
-                    <TextView
-                        android:id="@+id/txt_detail_nama"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Nama nasabah"
-                        android:textSize="18sp"
-                        android:paddingRight="40dp"
-                        />
-                </TableRow>
-                <TableRow
+                    android:paddingRight="40dp"
+                    android:text="Nama nasabah"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/grey"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_span="2"/>
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="No. KTP "
-                        style="@style/detail_title" />
-                    <TextView
-                        android:id="@+id/txt_detail_no_ktp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="3515040611910003"
-                        android:textSize="18sp"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/grey"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_span="2"/>
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="Alamat"
-                        style="@style/detail_title"
-                        />
-                    <TextView
-                        android:id="@+id/txt_detail_alamat"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:textSize="18sp"
-                        android:layout_height="wrap_content"
-                        android:text="Jl. Pemuda nomor 700 A RT 13 RW 04 Juwet Kenongo Porong Sidoarjo"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/grey"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_span="2"/>
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="No. Telepon"
-                        style="@style/detail_title"
-                        />
-                    <TextView
-                        android:id="@+id/txt_detail_no_telp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="089676679666"
-                        android:textSize="18sp"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorAccent"
+                    android:layout_height="2dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginTop="10dp"
-                    >
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Pengajuan"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_span="2"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="Kantor Pengajuan"
-                        style="@style/detail_title"
-                        />
-                    <TextView
-                        android:id="@+id/txt_detail_kantor"
-                        android:layout_height="wrap_content"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:textSize="18sp"
-                        android:text="SKC BANDUNG - BNI KCU PERINTIS KEMERDEKAAN"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/grey"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_span="2"/>
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="Tanggal Pengajuan"
-                        style="@style/detail_title"
-                        />
-                    <TextView
-                        android:id="@+id/txt_detail_tanggal_submit"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="21/05/2016"
-                        android:textSize="18sp"
-                        android:layout_gravity="center_vertical"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/grey"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_span="2"/>
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="Jenis Pengajuan"
-                        style="@style/detail_title"
-                        android:paddingRight="10dp"
-                        />
-                    <TextView
-                        android:id="@+id/txt_detail_jenis_kredit"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="KUR"
-                        android:textSize="18sp"
-                        android:layout_gravity="center_vertical"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/grey"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_span="2"/>
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="Jumlah Pengajuan"
-                        style="@style/detail_title"
-                        />
-                    <TextView
-                        android:id="@+id/txt_detail_besar_pinjaman"
-                        android:layout_height="wrap_content"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:textSize="18sp"
-                        android:text="Rp. 90.000.000"
-                        android:layout_gravity="center_vertical"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/grey"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_span="2"/>
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="Status Pengajuan"
-                        style="@style/detail_title"
-                        />
-                    <TextView
-                        android:id="@+id/txt_detail_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@android:color/white"
-                        android:text="KUR"
-                        android:textSize="18sp"
-                        android:layout_gravity="center_vertical"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/grey"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_span="2"/>
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="Nama Pegawai"
-                        style="@style/detail_title"
-                        />
-                    <TextView
-                        android:id="@+id/txt_detail_nama_user"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="21/05/2016"
-                        android:textSize="18sp"
-                        />
-                </TableRow>
+                    android:layout_span="2"
+                    android:background="@color/grey" />
+            </TableRow>
 
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                <TableRow
-                    android:layout_width="match_parent"
+                <TextView
+                    style="@style/detail_title"
+                    android:text="No. KTP " />
+
+                <TextView
+                    android:id="@+id/txt_detail_no_ktp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorAccent"
+                    android:text="3515040611910003"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginTop="10dp"
-                    >
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Profil Usaha"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_span="2"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="Sektor Usaha"
-                        style="@style/detail_title"
-                        />
-                    <TextView
-                        android:id="@+id/txt_detail_sektor_usaha"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="Perdagangan"
-                        android:textSize="18sp"
-                        android:layout_weight="1"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/grey"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_span="2"/>
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="Anggunan"
-                        style="@style/detail_title"
-                        />
-                    <TextView
-                        android:id="@+id/txt_detail_anggunan"
-                        android:layout_height="wrap_content"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:textSize="18sp"
-                        android:text="Mobil BMW Tahun 2016 dan rumah seluas 10 Hektar di daerah setiabudhi"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/grey"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_span="2"/>
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-                    <TextView
-                        android:text="Lama Usaha"
-                        style="@style/detail_title"
-                        />
-                    <TextView
-                        android:id="@+id/txt_detail_lama_usaha"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="10 bulan"
-                        android:textSize="18sp"
-                        android:layout_weight="1"
-                        />
-                </TableRow>
+                    android:layout_span="2"
+                    android:background="@color/grey" />
+            </TableRow>
 
-                <TableRow
-                    android:layout_width="match_parent"
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/detail_title"
+                    android:text="Alamat" />
+
+                <TextView
+                    android:id="@+id/txt_detail_alamat"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorAccent"
+                    android:layout_weight="1"
+                    android:text="Jl. Pemuda nomor 700 A RT 13 RW 04 Juwet Kenongo Porong Sidoarjo"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginTop="10dp"
-                    >
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Lokasi Usaha"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_span="2"
-                        />
-                </TableRow>
-                <TableRow
+                    android:layout_span="2"
+                    android:background="@color/grey" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/detail_title"
+                    android:text="No. Telepon" />
+
+                <TextView
+                    android:id="@+id/txt_detail_no_telp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    >
-                    <RelativeLayout
-                        android:id="@+id/map_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="300dp"
-                        android:layout_span="2">
+                    android:text="089676679666"
+                    android:textSize="18sp" />
+            </TableRow>
 
-                        <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
-                            android:id="@+id/map"
-                            android:name="com.google.android.gms.maps.MapFragment"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            map:liteMode="true"
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorAccent">
 
-                            />
-
-                    </RelativeLayout>
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorAccent"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:text="Pengajuan"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/detail_title"
+                    android:text="Kantor Pengajuan" />
+
+                <TextView
+                    android:id="@+id/txt_detail_kantor"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="SKC BANDUNG - BNI KCU PERINTIS KEMERDEKAAN"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
                     android:layout_marginBottom="10dp"
                     android:layout_marginTop="10dp"
-                    >
+                    android:layout_span="2"
+                    android:background="@color/grey" />
+            </TableRow>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Photo Usaha"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/white"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_span="2" />
-                </TableRow>
-                <TableRow
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/detail_title"
+                    android:text="Tanggal Pengajuan" />
+
+                <TextView
+                    android:id="@+id/txt_detail_tanggal_submit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    >
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="192dp"
-                        android:layout_span="2">
-                        <ImageView
-                            android:id="@+id/img_submit_location_1"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/border_image"
-                            android:src="@drawable/camera"
-                            android:tag="img"
-                            />
-                    </RelativeLayout>
-                </TableRow>
+                    android:layout_gravity="center_vertical"
+                    android:text="21/05/2016"
+                    android:textSize="18sp" />
+            </TableRow>
 
-                <TableRow
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:background="@color/grey" />
+            </TableRow>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="@color/grey"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_span="2" />
-                </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                <TableRow
+                <TextView
+                    style="@style/detail_title"
+                    android:paddingRight="10dp"
+                    android:text="Jenis Pengajuan" />
+
+                <TextView
+                    android:id="@+id/txt_detail_jenis_kredit"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="KUR"
+                    android:textSize="18sp" />
+            </TableRow>
 
-                    <RelativeLayout
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:background="@color/grey" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/detail_title"
+                    android:text="Jumlah Pengajuan" />
+
+                <TextView
+                    android:id="@+id/txt_detail_besar_pinjaman"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:text="Rp. 90.000.000"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:background="@color/grey" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2">
+
+                <TextView
+                    style="@style/detail_title"
+                    android:text="Status Pengajuan" />
+
+                <TextView
+                    android:id="@+id/txt_detail_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="KUR"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:background="@color/grey" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/detail_title"
+                    android:text="Nama Pegawai" />
+
+                <TextView
+                    android:id="@+id/txt_detail_nama_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="21/05/2016"
+                    android:textSize="18sp" />
+            </TableRow>
+
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorAccent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:text="Profil Usaha"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/detail_title"
+                    android:text="Sektor Usaha" />
+
+                <TextView
+                    android:id="@+id/txt_detail_sektor_usaha"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Perdagangan"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:background="@color/grey" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/detail_title"
+                    android:text="Anggunan" />
+
+                <TextView
+                    android:id="@+id/txt_detail_anggunan"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Mobil BMW Tahun 2016 dan rumah seluas 10 Hektar di daerah setiabudhi"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:background="@color/grey" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/detail_title"
+                    android:text="Lama Usaha" />
+
+                <TextView
+                    android:id="@+id/txt_detail_lama_usaha"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="10 bulan"
+                    android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorAccent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:text="Lokasi Usaha"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/map_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_span="2">
+
+                    <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/map"
+                        android:name="com.google.android.gms.maps.MapFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="192dp"
-                        android:layout_span="2">
+                        android:layout_height="match_parent"
+                        />
+                    <!--map:liteMode="true"-->
 
-                        <ImageView
-                            android:id="@+id/img_submit_location_2"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/border_image"
-                            android:src="@drawable/camera"
-                            android:tag="img" />
-                    </RelativeLayout>
-                </TableRow>
-            </TableLayout>
-        </LinearLayout>
+                </RelativeLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorAccent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:text="Photo Usaha"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="192dp"
+                    android:layout_span="2">
+
+                    <ImageView
+                        android:id="@+id/img_submit_location_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/border_image"
+                        android:src="@drawable/camera"
+                        android:tag="img" />
+                </RelativeLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:background="@color/grey" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="192dp"
+                    android:layout_span="2">
+
+                    <ImageView
+                        android:id="@+id/img_submit_location_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/border_image"
+                        android:src="@drawable/camera"
+                        android:tag="img" />
+                </RelativeLayout>
+            </TableRow>
+        </TableLayout>
     </ScrollView>
 </RelativeLayout>
