@@ -23,6 +23,7 @@ import com.sahaware.resysbni.R;
 import com.sahaware.resysbni.entity.DataGeneralInformation;
 import com.sahaware.resysbni.entity.NasabahEntity;
 import com.sahaware.resysbni.helper.DependencyInjection;
+import com.sahaware.resysbni.helper.MyApplication;
 import com.sahaware.resysbni.repository.ISessionRepository;
 import com.sahaware.resysbni.repository.ISqliteRepository;
 import com.sahaware.resysbni.util.Constants;
@@ -51,17 +52,18 @@ public class InformationFragment extends Fragment implements BaseSliderView.OnSl
     private HashMap<String, String> listImage;
     private List<DataGeneralInformation> dataInformation;
     private ListInformationAdapter mAdapter;
-    //private SpotsDialog progressDialog;
+    private SpotsDialog progressDialog;
     private RecyclerView mRecyclerView;
+    private String TAG = "informationFragment";
 
     public InformationFragment() {
         dataInformation = new ArrayList<>();
-        // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        progressDialog = new SpotsDialog(getContext(), "Mencari data...");
     }
 
     @Override
@@ -70,14 +72,14 @@ public class InformationFragment extends Fragment implements BaseSliderView.OnSl
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+        Log.e(TAG,"onCreateView");
         View view = inflater.inflate(R.layout.fragment_information, container, false);
         LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText("Halaman Utama");
         sliderShow = (SliderLayout) view.findViewById(R.id.slider);
-        //progressDialog = new SpotsDialog(getContext(), "Mencari data...");
+//        progressDialog = new SpotsDialog(getContext(), "Mencari data...");
         entryListSlider();
         loadSlider(view);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
@@ -87,26 +89,24 @@ public class InformationFragment extends Fragment implements BaseSliderView.OnSl
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         mAdapter = new ListInformationAdapter(dataInformation);
         mRecyclerView.setAdapter(mAdapter);
-        //This is the code to provide a sectioned grid
-
         return view;
     }
 
-   /* @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-
-        if (isVisibleToUser) {
-            if(DependencyInjection.Get(ISqliteRepository.class).isDataReportEmpty()){
-                //progressDialog.show();
-                initData();
-            }else {
-                populateSampleData();
-            }
-
-
-        }
-    }*/
+//    @Override
+//    public void setUserVisibleHint(boolean isVisibleToUser) {
+//        super.setUserVisibleHint(isVisibleToUser);
+//
+//        if (isVisibleToUser) {
+//            if(DependencyInjection.Get(ISqliteRepository.class).isDataReportEmpty()){
+//                //progressDialog.show();
+//                initData();
+//            }else {
+//                populateSampleData();
+//            }
+//
+//
+//        }
+//    }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -114,7 +114,7 @@ public class InformationFragment extends Fragment implements BaseSliderView.OnSl
 
         if (isVisibleToUser) {
             if (DependencyInjection.Get(ISqliteRepository.class).isGeneralInformationEmpty()) {
-                //progressDialog.show();
+                progressDialog.show();
                 getGeneralInformation();
             } else
                 showDB();
@@ -132,9 +132,13 @@ public class InformationFragment extends Fragment implements BaseSliderView.OnSl
 
         if (mAdapter != null)
             mAdapter.notifyDataSetChanged();
+
+        if (progressDialog!=null)
+            progressDialog.dismiss();
     }
 
     public void getGeneralInformation() {
+//        Log.e(TAG,"run getGeneralInformation()");
         final int DEFAULT_TIMEOUT = 20 * 1000;
         JSONObject jsonParams = new JSONObject();
         StringEntity entity = null;
@@ -168,6 +172,8 @@ public class InformationFragment extends Fragment implements BaseSliderView.OnSl
 
                 try {
                     status = response.getJSONObject("status");
+                    if(MyApplication.validateOtherLogin(status.getInt("code"),getActivity())) return;
+
                     if (status.getInt("code") == 200)
                         listInformation = response.getJSONArray("listObj");
                     else
@@ -196,10 +202,9 @@ public class InformationFragment extends Fragment implements BaseSliderView.OnSl
                     }
                 } else
                     Toast.makeText(getContext(), "Data tidak tersedia !", Toast.LENGTH_SHORT).show();
-/*
-                if (progressDialog!=null)
-                    progressDialog.dismiss();*/
 
+//                if (progressDialog!=null)
+                progressDialog.dismiss();
                 showDB();
             }
 
@@ -264,26 +269,26 @@ public class InformationFragment extends Fragment implements BaseSliderView.OnSl
         //unbinder.unbind();
     }
 
-  /*  private void populateSampleData() {
-        List<DataGeneralInformation> listInformation = DependencyInjection.Get(ISqliteRepository.class).getAllInformation();
-        dataInformation.clear();
-        if (listInformation != null) {
-            for (DataGeneralInformation information : listInformation) {
-                dataInformation.add(information);
-            }
-        }
-        if(mAdapter!= null) {
-            mAdapter.notifyDataSetChanged();
-        }
-    }
-*/
-    /*private void initData(){
-        DependencyInjection.Get(ISqliteRepository.class).clearInformation();
-        *//*DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Kedit Usaha Rakyat", "BNI dapat memberikan pembiayaan kepada usaha anda yang feasible namu masih belum memiliki agunan sesuai persyaratan Bank.  Solusinya adalah dengan Kredit Usaha Rakyat yang dapat diberikan kepada calon debitur Usaha Mikro, Kecil, Menengah, Anggota keluarga dari karyawan/karyawati yang berpenghasilan tetap atau bekerja sebagai Tenaga Kerja Indonesia (TKI) dan TKI yang purna dari bekerja di luar negeri."));
-        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "EDC", "Bisnis Merchant merupakan salah satu aktivitas usaha yang dilakukan oleh Bank dalam upaya memberikan layanan transaksi perbankan kepada nasabahnya dengan cara memasang atau menempatkan EDC dan/atau Imprinter di tempat usaha Merchant. Dalam Bisnis Merchant ini Bank bertindak sebagai Acquiring dari VISA dan MasterCard yang dapat menerima dan memproses Transaksi yang dilakukan dengan menggunakan Kartu Kredit ataupun Kartu Debit."));
-        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Laku Pandai", "Perorangan atau badan hukum yang telah bekerjasama dengan BNI untuk menjadi kepanjangan tangan BNI dalam menyediakan layanan perbankan kepada masyarakat dalam rangka pemerataan layanan perbankan berupa produk tabungan, kredit mikro, asuransi mikro, uang elektronik, pembelian pulsa/voucher dan pembayaran tagihan."));*//*
-        populateSampleData();
-    }
-*/
+//    private void populateSampleData() {
+//        List<DataGeneralInformation> listInformation = DependencyInjection.Get(ISqliteRepository.class).getAllInformation();
+//        dataInformation.clear();
+//        if (listInformation != null) {
+//            for (DataGeneralInformation information : listInformation) {
+//                dataInformation.add(information);
+//            }
+//        }
+//        if(mAdapter!= null) {
+//            mAdapter.notifyDataSetChanged();
+//        }
+//    }
+//
+//    private void initData(){
+//        DependencyInjection.Get(ISqliteRepository.class).clearInformation();
+//        *//*DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Kedit Usaha Rakyat", "BNI dapat memberikan pembiayaan kepada usaha anda yang feasible namu masih belum memiliki agunan sesuai persyaratan Bank.  Solusinya adalah dengan Kredit Usaha Rakyat yang dapat diberikan kepada calon debitur Usaha Mikro, Kecil, Menengah, Anggota keluarga dari karyawan/karyawati yang berpenghasilan tetap atau bekerja sebagai Tenaga Kerja Indonesia (TKI) dan TKI yang purna dari bekerja di luar negeri."));
+//        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "EDC", "Bisnis Merchant merupakan salah satu aktivitas usaha yang dilakukan oleh Bank dalam upaya memberikan layanan transaksi perbankan kepada nasabahnya dengan cara memasang atau menempatkan EDC dan/atau Imprinter di tempat usaha Merchant. Dalam Bisnis Merchant ini Bank bertindak sebagai Acquiring dari VISA dan MasterCard yang dapat menerima dan memproses Transaksi yang dilakukan dengan menggunakan Kartu Kredit ataupun Kartu Debit."));
+//        DependencyInjection.Get(ISqliteRepository.class).addInformation(new DataGeneralInformation("Jenis Pinjaman", "Laku Pandai", "Perorangan atau badan hukum yang telah bekerjasama dengan BNI untuk menjadi kepanjangan tangan BNI dalam menyediakan layanan perbankan kepada masyarakat dalam rangka pemerataan layanan perbankan berupa produk tabungan, kredit mikro, asuransi mikro, uang elektronik, pembelian pulsa/voucher dan pembayaran tagihan."));*//*
+//        populateSampleData();
+//    }
+
 
 }

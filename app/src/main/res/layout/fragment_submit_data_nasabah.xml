@@ -279,14 +279,20 @@
                     android:id="@+id/map_layout"
                     android:layout_width="match_parent"
                     android:layout_height="300dp">
-                    <com.google.android.gms.maps.MapView
+                    <!--com.google.android.gms.maps.MapView
                         android:id="@+id/map"
                         android:name="com.google.android.gms.maps.SupportMapFragment"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginTop="-100dp"
                         android:layout_marginBottom="-100dp"
-                        tools:context="com.sahaware.resysbni.view.fragment.SubmitFragment"/>
+                        tools:context="com.sahaware.resysbni.view.fragment.SubmitFragment"/-->
+                    <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/map"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        />
 
                     <ImageView
                         android:id="@+id/transparent_image"
@@ -380,6 +386,7 @@
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:layout_marginTop="3dp"
+                        android:layout_marginLeft="3dp"
                         android:layout_alignLeft="@+id/tv_foto_ktp"
                         android:layout_toEndOf="@+id/img_submit_location_2"
                         />

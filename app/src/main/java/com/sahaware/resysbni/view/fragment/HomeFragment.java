@@ -24,6 +24,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sahaware.resysbni.R;
 import com.sahaware.resysbni.entity.DataReport;
 import com.sahaware.resysbni.helper.DependencyInjection;
+import com.sahaware.resysbni.helper.MyApplication;
 import com.sahaware.resysbni.repository.ISessionRepository;
 import com.sahaware.resysbni.repository.ISqliteRepository;
 import com.sahaware.resysbni.util.Constants;
@@ -45,6 +46,7 @@ import dmax.dialog.SpotsDialog;
 
 
 public class HomeFragment extends Fragment {
+    private static final String TAG = "HomeFragment";
     private FragmentActivity myContext;
     private RecyclerView recyclerView;
     private ListReportAdapter mAdapter;
@@ -58,6 +60,9 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
+        progressDialog.show();
+        getDataReport();
     }
 
     @Override
@@ -66,14 +71,13 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home
-                , container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+        Log.e(TAG,"onCreateView");
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
         LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText("Riwayat Data Referral");
-        progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
+//        progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         swipeRefreshListFragment = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshListReport);
         mAdapter = new ListReportAdapter(reportList);
@@ -86,8 +90,13 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view, int position) {
                 DataReport report = reportList.get(position);
-                progressDialog.show();
-                getDetailUser(report.getID());
+//                progressDialog.show();
+//                getDetailUser(report.getID());
+                Intent intent = new Intent(getActivity(), DetailNasabahActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt(Constants.KEY_ID, report.getID());
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
 
             @Override
@@ -113,16 +122,14 @@ public class HomeFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
 
         if (isVisibleToUser) {
-            if(DependencyInjection.Get(ISqliteRepository.class).isDataReportEmpty()){
-                progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
-                //progressDialog.show();
-                getDataReport();
-               // progressDialog.dismiss();
-            }else {
+//            if(DependencyInjection.Get(ISqliteRepository.class).isDataReportEmpty()){
+//                progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
+//                progressDialog.show();
+//                getDataReport();
+//                progressDialog.dismiss();
+//            }else {
                 showDB();
-            }
-
-
+//            }
         }
     }
 
@@ -227,6 +234,8 @@ public class HomeFragment extends Fragment {
 
                 try {
                     status = response.getJSONObject("status");
+                    if(MyApplication.validateOtherLogin(status.getInt("code"),getActivity())) return;
+
                     if (status.getInt("code") == 200) {
                         listReport = response.getJSONArray("listObj");
                     } else {
@@ -253,9 +262,9 @@ public class HomeFragment extends Fragment {
                 } else {
                     Toast.makeText(getActivity(), "Data tidak tersedia !", Toast.LENGTH_SHORT).show();
                 }
-                if (progressDialog!=null) {
+//                if (progressDialog!=null) {
                     progressDialog.dismiss();
-                }
+//                }
                 swipeRefreshListFragment.setRefreshing(false);
                 showDB();
 
@@ -277,122 +286,124 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    public void getDetailUser(final Integer idNasabah){
-        final int DEFAULT_TIMEOUT = 20 * 1000;
-        JSONObject jsonParams = new JSONObject();
-        StringEntity entity = null;
-        try {
-
-            jsonParams.put("idNasabah", idNasabah);
-            jsonParams.put("token", DependencyInjection.Get(ISessionRepository.class).getToken());
-            entity = new StringEntity(jsonParams.toString());
-            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setTimeout(DEFAULT_TIMEOUT);
-        client.setConnectTimeout(DEFAULT_TIMEOUT);
-        client.setResponseTimeout(DEFAULT_TIMEOUT);
-        client.post(getActivity(), Constants.API_GET_NASABAH_DETAIL, entity, "application/json", new JsonHttpResponseHandler() {
-
-            @Override
-            public void onStart() {
-                progressDialog.dismiss();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, JSONObject response) {
-
-                JSONObject jo, obj = null;
-                Boolean status = false;
-                try {
-                    try {
-                        obj = response.getJSONObject("obj");
-                    }catch (JSONException e){
-                        obj = null;
-                    }
-                    jo = response.getJSONObject(Constants.KEY_STATUS);
-                    status = jo.getBoolean(Constants.KEY_SUCCESS);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                if (status){
-                    if(obj!=null){
-                        String img1, img2;
-                        Intent intent = new Intent(getActivity(), DetailNasabahActivity.class);
-                        Bundle bundle = new Bundle();
-                        try {
-                            bundle.putString(Constants.KEY_TANGGAL_SUBMIT, obj.getString(Constants.KEY_TANGGAL_SUBMIT));
-                            bundle.putString(Constants.KEY_NAMA_REVERAL, obj.getString(Constants.KEY_NAMA_REVERAL));
-                            bundle.putString(Constants.KEY_ANGGUNAN, obj.getString(Constants.KEY_ANGGUNAN));
-                            bundle.putDouble(Constants.KEY_LAT, obj.getDouble(Constants.KEY_LAT));
-                            bundle.putString(Constants.KEY_JUMLAH_KREDIT, obj.getString(Constants.KEY_JUMLAH_KREDIT));
-                            bundle.putString(Constants.KEY_ALAMAT, obj.getString(Constants.KEY_ALAMAT));
-                            bundle.putString(Constants.KEY_NO_TELP, obj.getString(Constants.KEY_NO_TELP));
-                            bundle.putString(Constants.KEY_NAMA_USER, obj.getString(Constants.KEY_NAMA_USER));
-                            bundle.putString(Constants.KEY_NAMA_STATUS, obj.getString(Constants.KEY_NAMA_STATUS));
-                            bundle.putString(Constants.KEY_LAMA_USAHA, obj.getString(Constants.KEY_LAMA_USAHA));
-                            bundle.putString(Constants.KEY_KANTOR, obj.getString(Constants.KEY_KANTOR));
-                            bundle.putString(Constants.KEY_NAMA, obj.getString(Constants.KEY_NAMA));
-                            bundle.putDouble(Constants.KEY_LONG, obj.getDouble(Constants.KEY_LONG));
-                            bundle.putString(Constants.KEY_KTP, obj.getString(Constants.KEY_KTP));
-                            bundle.putString(Constants.KEY_SEKTOR_USAHA, obj.getString(Constants.KEY_SEKTOR_USAHA));
-                            try {
-                                JSONObject image = obj.getJSONObject("Image");
-
-                                img1 = image.getString(obj.getString(Constants.KEY_IMAGE_1));
-                                img2 = image.getString(obj.getString(Constants.KEY_IMAGE_2));
-
-                            } catch (JSONException e) {
-                                img1 = null;
-                                img2 = null;
-                            }
-                            bundle.putString(Constants.KEY_IMAGE_1,img1);
-                            bundle.putString(Constants.KEY_IMAGE_2,img2);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                    }else {
-                        Toast.makeText(getActivity(), "ID belum terdaftar", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(getActivity(), "Terjadi kesalahan pada koneksi.", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.String responseString) {
-                Log.d("ListFragment", "onSuccess: "+String.valueOf(statusCode));
-                Log.d("ListFragment", "onSuccess: "+headers);
-                Log.d("ListFragment", "onSuccess: "+responseString);
-            }
-
-            @Override
-            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.Throwable throwable, org.json.JSONArray errorResponse){
-                Log.d("ListFragment", "onSuccess: "+String.valueOf(statusCode));
-                Log.d("ListFragment", "onSuccess: "+headers);
-                Log.d("ListFragment", "onSuccess: "+throwable);
-                Log.d("ListFragment", "onSuccess: "+errorResponse);
-            }
-
-            @Override
-            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.String responseString, java.lang.Throwable throwable){
-                Log.d("ListFragment", "onSuccess: "+String.valueOf(statusCode));
-                Log.d("ListFragment", "onSuccess: "+headers);
-                Log.d("ListFragment", "onSuccess: "+throwable);
-                Log.d("ListFragment", "onSuccess: "+responseString);
-            }
-
-            @Override
-            public void onRetry(int retryNo) {
-                // called when request is retried
-            }
-        });
-    }
+//    public void getDetailUser(final Integer idNasabah){
+//        final int DEFAULT_TIMEOUT = 20 * 1000;
+//        JSONObject jsonParams = new JSONObject();
+//        StringEntity entity = null;
+//        try {
+//
+//            jsonParams.put("idNasabah", idNasabah);
+//            jsonParams.put("token", DependencyInjection.Get(ISessionRepository.class).getToken());
+//            entity = new StringEntity(jsonParams.toString());
+//            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8"));
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        AsyncHttpClient client = new AsyncHttpClient();
+//        client.setTimeout(DEFAULT_TIMEOUT);
+//        client.setConnectTimeout(DEFAULT_TIMEOUT);
+//        client.setResponseTimeout(DEFAULT_TIMEOUT);
+//        client.post(getActivity(), Constants.API_GET_NASABAH_DETAIL, entity, "application/json", new JsonHttpResponseHandler() {
+//
+//            @Override
+//            public void onStart() {
+////                progressDialog.dismiss();
+//            }
+//
+//            @Override
+//            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, JSONObject response) {
+//
+//                JSONObject jo, obj = null;
+//                Boolean status = false;
+//                try {
+//                    try {
+//                        obj = response.getJSONObject("obj");
+//                    }catch (JSONException e){
+//                        obj = null;
+//                    }
+//                    jo = response.getJSONObject(Constants.KEY_STATUS);
+//                    status = jo.getBoolean(Constants.KEY_SUCCESS);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                if (status){
+//                    if(obj!=null){
+//                        String img1, img2;
+//                        Intent intent = new Intent(getActivity(), DetailNasabahActivity.class);
+//                        Bundle bundle = new Bundle();
+//                        try {
+//                            bundle.putString(Constants.KEY_TANGGAL_SUBMIT, obj.getString(Constants.KEY_TANGGAL_SUBMIT));
+//                            bundle.putString(Constants.KEY_NAMA_REVERAL, obj.getString(Constants.KEY_NAMA_REVERAL));
+//                            bundle.putString(Constants.KEY_ANGGUNAN, obj.getString(Constants.KEY_ANGGUNAN));
+//                            bundle.putDouble(Constants.KEY_LAT, obj.getDouble(Constants.KEY_LAT));
+//                            bundle.putString(Constants.KEY_JUMLAH_KREDIT, obj.getString(Constants.KEY_JUMLAH_KREDIT));
+//                            bundle.putString(Constants.KEY_ALAMAT, obj.getString(Constants.KEY_ALAMAT));
+//                            bundle.putString(Constants.KEY_NO_TELP, obj.getString(Constants.KEY_NO_TELP));
+//                            bundle.putString(Constants.KEY_NAMA_USER, obj.getString(Constants.KEY_NAMA_USER));
+//                            bundle.putString(Constants.KEY_NAMA_STATUS, obj.getString(Constants.KEY_NAMA_STATUS));
+//                            bundle.putString(Constants.KEY_LAMA_USAHA, obj.getString(Constants.KEY_LAMA_USAHA));
+//                            bundle.putString(Constants.KEY_KANTOR, obj.getString(Constants.KEY_KANTOR));
+//                            bundle.putString(Constants.KEY_NAMA, obj.getString(Constants.KEY_NAMA));
+//                            bundle.putDouble(Constants.KEY_LONG, obj.getDouble(Constants.KEY_LONG));
+//                            bundle.putString(Constants.KEY_KTP, obj.getString(Constants.KEY_KTP));
+//                            bundle.putString(Constants.KEY_SEKTOR_USAHA, obj.getString(Constants.KEY_SEKTOR_USAHA));
+//                            try {
+//                                JSONObject image = obj.getJSONObject("Image");
+//
+//                                img1 = image.getString(Constants.KEY_IMAGE_1);
+//                                img2 = image.getString(Constants.KEY_IMAGE_2);
+//
+//                            } catch (JSONException e) {
+//                                img1 = null;
+//                                img2 = null;
+//                            }
+//                            bundle.putString(Constants.KEY_IMAGE_1,img1);
+//                            bundle.putString(Constants.KEY_IMAGE_2,img2);
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                        intent.putExtras(bundle);
+//                        startActivity(intent);
+//                    }else {
+//                        Toast.makeText(getActivity(), "ID belum terdaftar", Toast.LENGTH_SHORT).show();
+//                    }
+//                } else {
+//                    Toast.makeText(getActivity(), "Terjadi kesalahan pada koneksi.", Toast.LENGTH_SHORT).show();
+//                }
+//                progressDialog.dismiss();
+//            }
+//
+//            @Override
+//            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.String responseString) {
+//                Log.d("ListFragment", "onSuccess: "+String.valueOf(statusCode));
+//                Log.d("ListFragment", "onSuccess: "+headers);
+//                Log.d("ListFragment", "onSuccess: "+responseString);
+//                progressDialog.dismiss();
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.Throwable throwable, org.json.JSONArray errorResponse){
+//                Log.d("ListFragment", "onSuccess: "+String.valueOf(statusCode));
+//                Log.d("ListFragment", "onSuccess: "+headers);
+//                Log.d("ListFragment", "onSuccess: "+throwable);
+//                Log.d("ListFragment", "onSuccess: "+errorResponse);
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.String responseString, java.lang.Throwable throwable){
+//                Log.d("ListFragment", "onSuccess: "+String.valueOf(statusCode));
+//                Log.d("ListFragment", "onSuccess: "+headers);
+//                Log.d("ListFragment", "onSuccess: "+throwable);
+//                Log.d("ListFragment", "onSuccess: "+responseString);
+//            }
+//
+//            @Override
+//            public void onRetry(int retryNo) {
+//                // called when request is retried
+//            }
+//        });
+//    }
 }

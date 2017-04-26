@@ -9,8 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.sahaware.resysbni.R;
+import com.sahaware.resysbni.entity.DataUser;
 import com.sahaware.resysbni.helper.DependencyInjection;
 import com.sahaware.resysbni.repository.ISessionRepository;
+import com.sahaware.resysbni.repository.ISqliteRepository;
 import com.sahaware.resysbni.util.UtilityImageByte;
 import com.wang.avi.AVLoadingIndicatorView;
 
@@ -58,13 +60,24 @@ public class SplashActivity extends AppCompatActivity {
 
                     Boolean loggedIn = DependencyInjection.Get(ISessionRepository.class).isLoggedIn();
                     if(loggedIn == true){
-                        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                        // Closing all the Activities
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        // Add new Flag to start new Activity
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
+                        DataUser dataUser;
+                        dataUser = DependencyInjection.Get(ISqliteRepository.class).getDetailUser();
+                        if(dataUser!=null) {
+                            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                            // Closing all the Activities
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            // Add new Flag to start new Activity
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }else{
+//                            Intent intent = new Intent(getApplicationContext(), VerificationActivity.class);
+//                            // Closing all the Activities
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                            // Add new Flag to start new Activity
+//                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            startActivity(intent);
+                            MainActivity.logout(getApplicationContext());
+                        }
                     }else{
                         Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                         // Closing all the Activities

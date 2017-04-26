@@ -4,18 +4,12 @@ package com.sahaware.resysbni.entity;
  * Created by PCnya-AINI on 28/04/2016.
  */
 public class NasabahEntity {
-    private String no_ktp,
-            nama,
-            alamat,
-            no_hp,
-            sektor_usaha,
-            lama_usaha,
-            jenis_kredit,
-            jumlah_kredit,
-            agunan,
-            kantor, tanggal, status, img1, img2, namaUser, sla;
+    private String alamat,agunan,img1, img2,jumlah_kredit,
+            jenis_kredit,no_ktp,lama_usaha,nama,nama_marketing,
+            no_hp,sektor_usaha,kantor,status,
+            namaUser, sla,tanggal;
     private Double lat, lang;
-    private Integer idNasabah;
+    private Integer idNasabah,idReveral,idMarketing,idUser;
 
     public NasabahEntity() {
     }
@@ -61,7 +55,11 @@ public class NasabahEntity {
         this.sla = sla;
     }
 
-    public NasabahEntity(String no_ktp, String nama, String alamat, String no_hp, String sektor_usaha, String lama_usaha, String jenis_kredit, String jumlah_kredit, String agunan, String kantor, String tanggal, String status, String img1, String img2, Double lat, Double lang, String namaUser, Integer idNasabah, String sla) {
+    public NasabahEntity(String no_ktp, String nama, String alamat, String no_hp, String sektor_usaha,
+                         String lama_usaha, String jenis_kredit, String jumlah_kredit, String agunan,
+                         String kantor, String tanggal, String status, String img1, String img2, Double lat,
+                         Double lang, String namaUser, Integer idNasabah, String sla, String nama_marketing,
+                         Integer idMarketing, Integer idReveral, Integer idUser) {
         this.no_ktp = no_ktp;
         this.nama = nama;
         this.alamat = alamat;
@@ -79,8 +77,12 @@ public class NasabahEntity {
         this.lat = lat;
         this.lang = lang;
         this.namaUser = namaUser;
+        this.idUser = idUser;
         this.idNasabah = idNasabah;
         this.sla = sla;
+        this.idMarketing = idMarketing;
+        this.idReveral = idReveral;
+        this.nama_marketing = nama_marketing;
     }
 
     public String getNamaUser() {
@@ -89,6 +91,14 @@ public class NasabahEntity {
 
     public void setNamaUser(String namaUser) {
         this.namaUser = namaUser;
+    }
+
+    public Integer getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(Integer idUser) {
+        this.idUser = idUser;
     }
 
     public Integer getIdNasabah() {
@@ -233,5 +243,29 @@ public class NasabahEntity {
 
     public void setSla(String sla) {
         this.sla = sla;
+    }
+
+    public String getNamaMarketing() {
+        return nama_marketing;
+    }
+
+    public void setNamaMarketing(String nama_marketing) {
+        this.nama_marketing = nama_marketing;
+    }
+
+    public Integer getIdMarketing() {
+        return idMarketing;
+    }
+
+    public void setIdMarketing(Integer idMarketing) {
+        this.idMarketing = idMarketing;
+    }
+
+    public Integer getIdReveral() {
+        return idReveral;
+    }
+
+    public void setIdReveral(Integer idReveral) {
+        this.idReveral = idReveral;
     }
 }

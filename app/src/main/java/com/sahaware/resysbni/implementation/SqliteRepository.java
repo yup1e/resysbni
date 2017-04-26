@@ -33,6 +33,7 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
     // table name
     private static final String TABLE_NASABAH = "t_nasabah";
     private static final String TABLE_NASABAH_TEMP = "t_nasabah_temp";
+    private static final String TABLE_NASABAH_DISPOS = "t_nasabah_dispos";
     private static final String TABLE_MASTER_KANTOR = "t_kantor";
     private static final String TABLE_MASTER_JENIS_PINJAMAN = "t_jenis_pinjaman";
     private static final String TABLE_MASTER_STATUS = "t_status_nasabah";
@@ -58,6 +59,11 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
     private static final String KEY_WAKTU = "waktu_submit";
     private static final String KEY_STATUS = "status";
     private static final String KEY_SLA = "sla";
+    private static final String KEY_MARKETING = "nama_marketing";
+    private static final String KEY_ID_MARKETING = "id_marketing";
+    private static final String KEY_USER = "nama_user";
+    private static final String KEY_ID_USER = "id_user";
+
 
     // Master Office Table Columns names
     private static final String KEY_NAMA_KANTOR = "nama_kantor";
@@ -106,7 +112,7 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_NASABAH_TABLE = "CREATE TABLE " + TABLE_NASABAH + "("
-                + KEY_ID + " INTEGER,"
+                + KEY_ID + " INTEGER PRIMARY KEY,"
                 + KEY_NO_KTP + " TEXT,"
                 + KEY_NAMA + " TEXT,"
                 + KEY_ALAMAT + " TEXT,"
@@ -123,7 +129,37 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
                 + KEY_IMG2 + " TEXT,"
                 + KEY_WAKTU + " TEXT,"
                 + KEY_STATUS + " TEXT,"
-                + KEY_SLA + " TEXT" + ")";
+                + KEY_SLA + " TEXT,"
+                + KEY_MARKETING + " TEXT,"
+                + KEY_ID_MARKETING + " TEXT,"
+                + KEY_USER + " TEXT,"
+                + KEY_ID_USER + " TEXT"
+                + ")";
+
+        String CREATE_NASABAH_DISPOS_TABLE = "CREATE TABLE " + TABLE_NASABAH_DISPOS + "("
+                + KEY_ID + " INTEGER PRIMARY KEY,"
+                + KEY_NO_KTP + " TEXT,"
+                + KEY_NAMA + " TEXT,"
+                + KEY_ALAMAT + " TEXT,"
+                + KEY_NO_HP + " TEXT,"
+                + KEY_SEKTOR + " TEXT,"
+                + KEY_LAMA + " TEXT,"
+                + KEY_JENIS + " TEXT,"
+                + KEY_JUMLAH + " TEXT,"
+                + KEY_AGUNAN + " TEXT,"
+                + KEY_KANTOR + " TEXT,"
+                + KEY_LAT + " TEXT,"
+                + KEY_LANG + " TEXT,"
+                + KEY_IMG1 + " TEXT,"
+                + KEY_IMG2 + " TEXT,"
+                + KEY_WAKTU + " TEXT,"
+                + KEY_STATUS + " TEXT,"
+                + KEY_SLA + " TEXT,"
+                + KEY_MARKETING + " TEXT,"
+                + KEY_ID_MARKETING + " TEXT,"
+                + KEY_USER + " TEXT,"
+                + KEY_ID_USER + " TEXT"
+                + ")";
 
         String CREATE_NASABAH_TEMP_TABLE = "CREATE TABLE " + TABLE_NASABAH_TEMP + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"
@@ -143,7 +179,12 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
                 + KEY_IMG2 + " TEXT,"
                 + KEY_WAKTU + " TEXT,"
                 + KEY_STATUS + " TEXT,"
-                + KEY_SLA + " TEXT" + ")";
+                + KEY_SLA + " TEXT,"
+                + KEY_MARKETING + " TEXT,"
+                + KEY_ID_MARKETING + " TEXT,"
+                + KEY_USER + " TEXT,"
+                + KEY_ID_USER + " TEXT"
+                + ")";
 
         String CREATE_MASTER_KANTOR = "CREATE TABLE " + TABLE_MASTER_KANTOR + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"
@@ -160,7 +201,7 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
                 + KEY_KETERANGAN + " TEXT" + ")";
 
         String CREATE_MASTER_STATUS = "CREATE TABLE " + TABLE_MASTER_STATUS + "("
-                + KEY_ID + " INTEGER,"
+                + KEY_ID + " INTEGER PRIMARY KEY,"
                 + KEY_NAMA_STATUS + " TEXT,"
                 + KEY_KETERANGAN + " TEXT" + ")";
 
@@ -181,12 +222,13 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
                 + KEY_TGL_LAHIR_USER + " TEXT" + ")";
 
         String CREATE_REPORT_TABLE = "CREATE TABLE " + TABLE_REPORT + "("
-                + KEY_ID + " INTEGER,"
+                + KEY_ID + " INTEGER PRIMARY KEY,"
                 + KEY_KETERANGAN_REPORT + " TEXT,"
                 + KEY_DATE_REPORT + " TEXT,"
                 + KEY_TIME_REPORT + " TEXT" + ")";
 
         db.execSQL(CREATE_NASABAH_TABLE);
+        db.execSQL(CREATE_NASABAH_DISPOS_TABLE);
         db.execSQL(CREATE_NASABAH_TEMP_TABLE);
         db.execSQL(CREATE_MASTER_KANTOR);
         db.execSQL(CREATE_MASTER_JENIS);
@@ -201,6 +243,7 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NASABAH);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NASABAH_DISPOS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NASABAH_TEMP);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_KANTOR);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_JENIS_PINJAMAN);
@@ -216,7 +259,6 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
      * All CRUD(Create, Read, Update, Delete) Operations
      */
 
-    // Adding new contact
     public void addNasabah(NasabahEntity nasabah) {
         SQLiteDatabase db = this.getWritableDatabase();
         util = new UtilityImageByte();
@@ -239,6 +281,10 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
         values.put(KEY_LAT, nasabah.getLat());
         values.put(KEY_LANG, nasabah.getLang());
         values.put(KEY_SLA, nasabah.getSla());
+        values.put(KEY_MARKETING, nasabah.getNamaMarketing());
+        values.put(KEY_ID_MARKETING, nasabah.getIdMarketing());
+        values.put(KEY_USER, nasabah.getNamaUser());
+        values.put(KEY_ID_USER, nasabah.getIdUser());
         // Inserting Row
         db.insert(TABLE_NASABAH, null, values);
         db.close(); // Closing database connection
@@ -249,7 +295,39 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
         db.delete(TABLE_NASABAH, null, null);
     }
 
-    // Adding new contact
+    public void addNasabahDispos(NasabahEntity nasabah) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        util = new UtilityImageByte();
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, nasabah.getIdNasabah());
+        values.put(KEY_NO_KTP, nasabah.getNo_ktp());
+        values.put(KEY_NAMA, nasabah.getNama());
+        values.put(KEY_ALAMAT, nasabah.getAlamat());
+        values.put(KEY_NO_HP, nasabah.getNo_hp());
+        values.put(KEY_SEKTOR, nasabah.getSektor_usaha());
+        values.put(KEY_LAMA, nasabah.getLama_usaha());
+        values.put(KEY_JENIS, nasabah.getJenis_kredit());
+        values.put(KEY_JUMLAH, nasabah.getJumlah_kredit());
+        values.put(KEY_AGUNAN, nasabah.getAgunan());
+        values.put(KEY_KANTOR, nasabah.getKantor());
+        values.put(KEY_IMG1, nasabah.getImg1());
+        values.put(KEY_IMG2, nasabah.getImg2());
+        values.put(KEY_WAKTU, nasabah.getTanggal());
+        values.put(KEY_STATUS, nasabah.getStatus());
+        values.put(KEY_LAT, nasabah.getLat());
+        values.put(KEY_LANG, nasabah.getLang());
+        values.put(KEY_SLA, nasabah.getSla());
+        // Inserting Row
+        db.insert(TABLE_NASABAH_DISPOS, null, values);
+        db.close(); // Closing database connection
+    }
+
+    public void clearNasabahDispos() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_NASABAH_DISPOS, null, null);
+    }
+
+
     public void addNasabahTemp(NasabahEntity nasabah) {
         SQLiteDatabase db = this.getWritableDatabase();
         util = new UtilityImageByte();
@@ -281,7 +359,8 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
         db.delete(TABLE_NASABAH_TEMP, null, null);
     }
 
-    // Adding new contact
+
+
     public void addKantor(DataKantor dataKantor) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -522,7 +601,7 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
 
     public List<NasabahEntity> getAllNasabah() {
         List<NasabahEntity> nasabahList = new ArrayList<NasabahEntity>();
-        String selectQuery = "SELECT  * FROM " + TABLE_NASABAH;
+        String selectQuery = "SELECT  * FROM " + TABLE_NASABAH + " ORDER BY "+ KEY_WAKTU;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -548,6 +627,51 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
                 contact.setTanggal(cursor.getString(15));
                 contact.setStatus(cursor.getString(16));
                 contact.setSla(cursor.getString(17));
+                contact.setNamaMarketing(cursor.getString(18));
+                contact.setIdMarketing(cursor.getInt(19));
+                contact.setNamaUser(cursor.getString(20));
+                contact.setIdUser(cursor.getInt(21));
+                // Adding contact to list
+                nasabahList.add(contact);
+            } while (cursor.moveToNext());
+        }
+
+        // return contact list
+        return nasabahList;
+    }
+
+    public List<NasabahEntity> getAllNasabahDispos() {
+        List<NasabahEntity> nasabahList = new ArrayList<NasabahEntity>();
+        String selectQuery = "SELECT  * FROM " + TABLE_NASABAH_DISPOS + " ORDER BY "+ KEY_WAKTU;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                NasabahEntity contact = new NasabahEntity();
+                contact.setIdNasabah(cursor.getInt(0));
+                contact.setNo_ktp(cursor.getString(1));
+                contact.setNama(cursor.getString(2));
+                contact.setAlamat(cursor.getString(3));
+                contact.setNo_hp(cursor.getString(4));
+                contact.setSektor_usaha(cursor.getString(5));
+                contact.setLama_usaha(cursor.getString(6));
+                contact.setJenis_kredit(cursor.getString(7));
+                contact.setJumlah_kredit(cursor.getString(8));
+                contact.setAgunan(cursor.getString(9));
+                contact.setKantor(cursor.getString(10));
+                contact.setLat(cursor.getDouble(11));
+                contact.setLang(cursor.getDouble(12));
+                contact.setImg1(cursor.getString(13));
+                contact.setImg2(cursor.getString(14));
+                contact.setTanggal(cursor.getString(15));
+                contact.setStatus(cursor.getString(16));
+                contact.setSla(cursor.getString(17));
+                contact.setNamaMarketing(cursor.getString(18));
+                contact.setIdMarketing(cursor.getInt(19));
+                contact.setNamaUser(cursor.getString(20));
+                contact.setIdUser(cursor.getInt(21));
                 // Adding contact to list
                 nasabahList.add(contact);
             } while (cursor.moveToNext());
@@ -593,27 +717,26 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
         return nasabahList;
     }
 
-/*    // Updating single contact
-    public int updateContact(Contact contact) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_NAME, contact.getName());
-        values.put(KEY_PH_NO, contact.getPhoneNumber());
-
-        // updating row
-        return db.update(TABLE_CONTACTS, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(contact.getID()) });
-    }*/
-
-/*    // Deleting single contact
-    public void deleteContact(Contact contact) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_CONTACTS, KEY_ID + " = ?",
-                new String[] { String.valueOf(contact.getID()) });
-        db.close();
-    }*/
-
+//    // Updating single contact
+//    public int updateContact(Contact contact) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//        values.put(KEY_NAME, contact.getName());
+//        values.put(KEY_PH_NO, contact.getPhoneNumber());
+//
+//        // updating row
+//        return db.update(TABLE_CONTACTS, values, KEY_ID + " = ?",
+//                new String[] { String.valueOf(contact.getID()) });
+//    }
+//
+//    // Deleting single contact
+//    public void deleteContact(Contact contact) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        db.delete(TABLE_CONTACTS, KEY_ID + " = ?",
+//                new String[] { String.valueOf(contact.getID()) });
+//        db.close();
+//    }
 
     // Getting contacts Count
     public int getContactsCount() {
@@ -646,6 +769,21 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
 
         SQLiteDatabase db = this.getWritableDatabase();
         String count = "SELECT count(*) FROM " + TABLE_NASABAH;
+        Cursor mcursor = db.rawQuery(count, null);
+        mcursor.moveToFirst();
+        int icount = mcursor.getInt(0);
+        if (icount > 0)
+            flag = false;
+        else
+            flag = true;
+        return flag;
+    }
+
+    public boolean isDataNasabahDisposEmpty() {
+        boolean flag;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        String count = "SELECT count(*) FROM " + TABLE_NASABAH_DISPOS;
         Cursor mcursor = db.rawQuery(count, null);
         mcursor.moveToFirst();
         int icount = mcursor.getInt(0);
@@ -707,6 +845,7 @@ public class SqliteRepository extends SQLiteOpenHelper implements ISqliteReposit
         // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NASABAH);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NASABAH_TEMP);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NASABAH_DISPOS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_KANTOR);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_JENIS_PINJAMAN);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_STATUS);

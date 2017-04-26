@@ -25,14 +25,19 @@ public class Constants {
     public static final String API_LOGIN = ip+ "/servicesreveral/login";
     public static final String API_VERIFICATION = ip + "/servicesreveral/update_user";
     public static final String API_GET_MASTER_DATA = ip + "/servicesreveral/get_all_master_data";
-    public static final String API_SAVE_DATA_NASABAH = ip + "/servicesreveral/add_data_reveral";
+    public static final String API_SAVE_DATA_NASABAH = ip + "/servicesreveral/new_add_data_reveral";
+    public static final String API_UPDATE_STATUS_NASABAH = ip + "/servicesreveral/update_status_nasabah";
     public static final String API_GET_DATA_NASABAH = ip + "/servicesreveral/get_all_data_reveral";
+    public static final String API_GET_DATA_NASABAH_DISPOS = ip + "/servicesreveral/get_all_data_reveral_Dispos";
     public static final String API_CHECK_KTP = ip + "/servicesreveral/verifikasi_nasabah";
     public static final String API_GET_NASABAH_DETAIL= ip + "/servicesreveral/get_detail_reveral";
     public static final String API_GET_USER_DETAIL= ip + "/servicesreveral/get_detail_user";
     public static final String API_GET_REPORT =  ip + "/servicesreveral/get_all_Report";
     public static final String API_SAVE_AVATAR_USER =  ip + "/servicesreveral/upload_image_avatar/";
     public static final String API_SAVE_IMAGE_NASABAH =  ip + "/servicesreveral/upload_image_nasabah/";
+    public static final String API_GET_MARKETING =  ip + "/servicesreveral/get_all_marketing";
+    public static final String API_GET_STATUS =  ip + "/servicesreveral/get_all_status";
+    public static final String API_DISPOS_NASABAH =  ip + "/servicesreveral/add_marketing_to_nasabah";
     public static final String API_GET_ALL_GENERAL_INFORMATION = ip + "/servicesreveral/get_all_general_informasi";
     public static final String API_IMAGE_NASABAH_URL = ip + "/Images/imageNasabah/";
     public static final String API_IMAGE_AVATAR_URL = ip + "/Images/Avatar/";
@@ -61,6 +66,7 @@ public class Constants {
     public static final String KEY_AVATAR = "avatar";
     public static final String KEY_JUMLAH_NASABAH = "jumlahNasabah";
     public static final String KEY_NO_TELP_USER = "noTlpn";
-
-
+    public static final String KEY_NAMA_MARKETING = "namaMarketing";
+    public static final String KEY_ID_MARKETING = "idMarketing";
+    public static final String KEY_ID_USER = "idUser";
 }

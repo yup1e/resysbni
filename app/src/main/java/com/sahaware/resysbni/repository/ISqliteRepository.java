@@ -15,6 +15,7 @@ import java.util.List;
  */
 public interface ISqliteRepository {
     void addNasabah(NasabahEntity nasabah);
+    void addNasabahDispos(NasabahEntity nasabah);
     void addNasabahTemp(NasabahEntity nasabah);
     void addKantor(DataKantor dataKantor);
     void addJenisPinjaman(DataJenisReveral dataJenisReveral);
@@ -26,6 +27,7 @@ public interface ISqliteRepository {
     List<DataKantor> getAllKantor();
     List<DataJenisReveral> getAllJenisPinjaman();
     List<NasabahEntity> getAllNasabah();
+    List<NasabahEntity> getAllNasabahDispos();
     List<NasabahEntity> getAllNasabahTemp();
     List<Datastatus> getAllStatus();
     List<DataReport> getAllReport();
@@ -35,9 +37,11 @@ public interface ISqliteRepository {
     boolean isGeneralInformationEmpty();
     boolean isMasterKantorEmpty();
     boolean isDataNasabahEmpty();
+    boolean isDataNasabahDisposEmpty();
     boolean isDataReportEmpty();
     boolean isMasterJenisPinjamanEmpty();
     void clearNasabah();
+    void clearNasabahDispos();
     void clearNasabahTemp();
     void clearDetailUser();
     void clearReport();

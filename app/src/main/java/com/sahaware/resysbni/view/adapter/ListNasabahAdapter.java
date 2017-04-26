@@ -23,7 +23,7 @@ public class ListNasabahAdapter extends RecyclerView.Adapter<ListNasabahAdapter.
     private Context context;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView nama, tanggal, status, jenis, no_hp, no_ktp, sla;
+        public TextView nama, tanggal, status, jenis, no_hp, no_ktp, sla, marketing, labelDisposisi;
         public ImageView imageView;
 
         public MyViewHolder(View view) {
@@ -36,6 +36,8 @@ public class ListNasabahAdapter extends RecyclerView.Adapter<ListNasabahAdapter.
             no_ktp = (TextView) view.findViewById(R.id.ktp_nasabah);
             sla = (TextView) view.findViewById(R.id.sla_nasabah);
             imageView = (ImageView) view.findViewById(R.id.imageView);
+            marketing = (TextView) view.findViewById(R.id.disposisi);
+            labelDisposisi = (TextView) view.findViewById(R.id.labelDisposisi);
         }
     }
 
@@ -61,9 +63,26 @@ public class ListNasabahAdapter extends RecyclerView.Adapter<ListNasabahAdapter.
         holder.no_hp.setText(nasabah.getNo_hp());
         holder.no_ktp.setText(nasabah.getNo_ktp());
         if (nasabah.getSla() != null) {
-            holder.sla.setText(Html.fromHtml(Html.fromHtml(nasabah.getSla()).toString()));
+            String sla = Html.fromHtml(nasabah.getSla()).toString();
+            String nohtml = sla.replaceAll("\\<.*?>","");
+            if(!nohtml.toString().equalsIgnoreCase("null") && !nohtml.toString().isEmpty())
+                holder.sla.setText(nohtml);
+            else
+                holder.sla.setVisibility(View.GONE);
+        }else{
+            holder.sla.setVisibility(View.GONE);
         }
-
+        if(nasabah.getNamaMarketing()!=null) {
+            if (!nasabah.getNamaMarketing().toString().equalsIgnoreCase("null") && !nasabah.getNamaMarketing().toString().isEmpty()) {
+                holder.marketing.setText(nasabah.getNamaMarketing());
+            }else{
+                holder.labelDisposisi.setVisibility(View.GONE);
+                holder.marketing.setVisibility(View.GONE);
+            }
+        }else{
+            holder.labelDisposisi.setVisibility(View.GONE);
+            holder.marketing.setVisibility(View.GONE);
+        }
 
         Picasso.with(context)
                 .load(Constants.API_IMAGE_NASABAH_URL + nasabah.getImg1())
@@ -75,7 +94,7 @@ public class ListNasabahAdapter extends RecyclerView.Adapter<ListNasabahAdapter.
             if (nasabah.getStatus().equalsIgnoreCase("open")) {
                 holder.status.setText(nasabah.getStatus());
                 holder.status.setBackgroundResource(R.drawable.border_open);
-            } else if (nasabah.getStatus().equalsIgnoreCase("on progress") || nasabah.getStatus().equalsIgnoreCase("survey")) {
+            } else if (nasabah.getStatus().equalsIgnoreCase("on progres") || nasabah.getStatus().equalsIgnoreCase("survey")) {
                 holder.status.setText(nasabah.getStatus());
                 holder.status.setBackgroundResource(R.drawable.border_on_progress);
             } else if (nasabah.getStatus().equalsIgnoreCase("closed")) {

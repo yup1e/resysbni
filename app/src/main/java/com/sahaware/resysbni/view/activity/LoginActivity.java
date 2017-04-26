@@ -1,5 +1,6 @@
 package com.sahaware.resysbni.view.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -62,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         ButterKnife.bind(this);
-        progressDialog = new SpotsDialog(this, "Silahkan tunggu…");
+        progressDialog = new SpotsDialog(this, "Login sedang divalidasi...");
         loginButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -72,27 +73,23 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        /*forgotLink.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // Start the Signup activity
-                Intent intent = new Intent(getApplicationContext(), ForgotActivity.class);
-                startActivityForResult(intent, REQUEST_SIGNUP);
-            }
-        });*/
+//        forgotLink.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                // Start the Signup activity
+//                Intent intent = new Intent(getApplicationContext(), ForgotActivity.class);
+//                startActivityForResult(intent, REQUEST_SIGNUP);
+//            }
+//        });
     }
 
     public void login() {
-        Log.d(TAG, "Login");
-
         if (!validate()) {
             onLoginFailed();
             return;
         }
-
         loginButton.setEnabled(false);
-
         String email = loginEmailText.getText().toString();
         String password = loginPasswordText.getText().toString();
         Boolean isConnectedToInternet = DependencyInjection.Get(ICheckConnection.class).isConnectedToInternet();
@@ -112,7 +109,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -134,20 +130,19 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess(Boolean flag) {
         loginButton.setEnabled(true);
-        progressDialog.dismiss();
         if (flag) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
-            finish();
         }else {
             Intent intent = new Intent(getApplicationContext(), VerificationActivity.class);
             startActivity(intent);
-            finish();
         }
-
+        progressDialog.dismiss();
+        finish();
     }
 
     public void onLoginFailed() {
+        progressDialog.dismiss();
         Toast.makeText(getBaseContext(), "Silahkan masukan NPP atau Password dengan benar.", Toast.LENGTH_LONG).show();
         loginButton.setEnabled(true);
     }
@@ -201,7 +196,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, JSONObject response) {
-                progressDialog.dismiss();
+//                progressDialog.dismiss();
                 JSONObject obj, status ;
                 JSONArray dataStatus=null, dataKantor = null, dataJenisReveral = null;
 
@@ -332,6 +327,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void checkUser(String username, String password){
+//        Log.e(TAG,"method : checkUser");
         final int DEFAULT_TIMEOUT = 20 * 1000;
         JSONObject jsonParams = new JSONObject();
         StringEntity entity = null;
@@ -339,6 +335,7 @@ public class LoginActivity extends AppCompatActivity {
             jsonParams.put("userName", username);
             jsonParams.put("password", password);
             entity = new StringEntity(jsonParams.toString());
+//            Log.e(TAG,"DATALOGIN: "+jsonParams.toString());
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8"));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -392,10 +389,13 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.Throwable throwable, JSONObject errorResponse){
-                Log.d(TAG, "onSuccess: "+String.valueOf(statusCode));
-                Log.d(TAG, "onSuccess: "+headers);
-                Log.d(TAG, "onSuccess: "+throwable);
-                Log.d(TAG, "onSuccess: "+errorResponse);
+                progressDialog.dismiss();
+                Log.e(TAG, "onFailure: "+String.valueOf(statusCode));
+                Log.e(TAG, "onFailure: "+headers);
+                Log.e(TAG, "onFailure: "+throwable);
+                Log.e(TAG, "onFailure: "+errorResponse);
+                Toast.makeText(LoginActivity.this, "Maaf koneksi bermasalah, silahkan coba lagi!", Toast.LENGTH_LONG).show();
+                loginButton.setEnabled(true);
             }
 
             @Override

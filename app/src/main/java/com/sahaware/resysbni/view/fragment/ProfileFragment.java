@@ -31,13 +31,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sahaware.resysbni.R;
 import com.sahaware.resysbni.entity.DataUser;
 import com.sahaware.resysbni.helper.DependencyInjection;
+import com.sahaware.resysbni.helper.MyApplication;
 import com.sahaware.resysbni.repository.ISessionRepository;
 import com.sahaware.resysbni.repository.ISqliteRepository;
 import com.sahaware.resysbni.util.Constants;
 import com.sahaware.resysbni.view.activity.LoginActivity;
+import com.sahaware.resysbni.view.activity.MainActivity;
 import com.sahaware.resysbni.view.custom.CustomCircularImageView;
 import com.squareup.picasso.Picasso;
 
@@ -48,6 +52,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
 //import java.io.FileOutputStream;
 //import java.io.IOException;
 
@@ -60,7 +65,10 @@ import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.entity.ByteArrayEntity;
+import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
 import cz.msebera.android.httpclient.util.EntityUtils;
 import dmax.dialog.SpotsDialog;
 import info.hoang8f.widget.FButton;
@@ -99,7 +107,7 @@ public class ProfileFragment extends Fragment {
     private Intent pictureActionIntent = null;
     Bitmap bitmap;
     final Context context = getActivity();
-    private static final String TAG = "UploadImage";
+    private static final String TAG = "ProfileFragment";
     String selectedImagePath;
     ImageView id_img;
     public ProfileFragment() {
@@ -112,38 +120,37 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+        Log.e(TAG,"onCreateView");
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         mTitle.setText("Profil Pegawai");
         progressDialog = new SpotsDialog(getActivity());
-        //TextView txt_profile_nama = ButterKnife.findById(view, R.id.txt_profile_nama);
+//        TextView txt_profile_nama = ButterKnife.findById(view, R.id.txt_profile_nama);
         ButterKnife.bind(this, view);
-        //txt_profile_nama.setText("Noor Shakato Eka Dhana");
 
-        // Inflate the layout for this fragment
-
-        if(!DependencyInjection.Get(ISqliteRepository.class).isDataNasabahEmpty()){
-            DataUser dataUser;
-            dataUser = DependencyInjection.Get(ISqliteRepository.class).getDetailUser();
-            if(dataUser!=null) {
-                txt_profile_jumlah_nasabah.setText(dataUser.getJumlahNasabah());
-                txt_profile_nama.setText(dataUser.getNama());
-                txt_profile_alamat.setText(dataUser.getAlamat());
-                txt_profile_email.setText(dataUser.getEmail());
-                txt_profile_nip.setText(dataUser.getNIP());
-                txt_profile_no_telp.setText(dataUser.getNoTlpn());
-                txt_profile_tgl_lahir.setText(dataUser.getTglLahir());
-                txt_profile_point.setText(String.valueOf(dataUser.getPoint()));
-                if (!dataUser.getAvatar().isEmpty()) {
-                    Picasso.with(getContext())
-                            .load(Constants.API_IMAGE_AVATAR_URL+dataUser.getAvatar())
-                            .error(R.drawable.profile_user)
-                            .into(user_profile_photo);
-                }
+        DataUser dataUser;
+        dataUser = DependencyInjection.Get(ISqliteRepository.class).getDetailUser();
+        if(dataUser!=null) {
+            txt_profile_jumlah_nasabah.setText(dataUser.getJumlahNasabah());
+            txt_profile_nama.setText(dataUser.getNama());
+            txt_profile_alamat.setText(dataUser.getAlamat());
+            txt_profile_email.setText(dataUser.getEmail());
+            txt_profile_nip.setText(dataUser.getNIP());
+            txt_profile_no_telp.setText(dataUser.getNoTlpn());
+            txt_profile_tgl_lahir.setText(dataUser.getTglLahir());
+            txt_profile_point.setText(String.valueOf(dataUser.getPoint()));
+            if (!dataUser.getAvatar().isEmpty()) {
+                Picasso.with(getContext())
+                        .load(Constants.API_IMAGE_AVATAR_URL+dataUser.getAvatar())
+                        .error(R.drawable.profile_user)
+                        .into(user_profile_photo);
             }
+//        }else{
+//            Log.e(TAG,"DataUser not found");
+        }else{
+            getDataUser();
         }
 
         user_profile_photo.setOnClickListener(new View.OnClickListener() {
@@ -180,6 +187,108 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+    public void getDataUser() {
+//        Log.e(TAG,"run getDataUser");
+
+        final int DEFAULT_TIMEOUT = 20 * 1000;
+        JSONObject jsonParams = new JSONObject();
+        StringEntity entity = null;
+        try {
+            jsonParams.put("id", DependencyInjection.Get(ISessionRepository.class).getId());
+            jsonParams.put("token", DependencyInjection.Get(ISessionRepository.class).getToken());
+            entity = new StringEntity(jsonParams.toString());
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.setTimeout(DEFAULT_TIMEOUT);
+        client.setConnectTimeout(DEFAULT_TIMEOUT);
+        client.setResponseTimeout(DEFAULT_TIMEOUT);
+        client.post(getActivity(), Constants.API_GET_USER_DETAIL, entity, "application/json", new JsonHttpResponseHandler() {
+
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, JSONObject response) {
+                JSONObject dataUser = null, status;
+                int point;
+                try {
+                    status = response.getJSONObject("status");
+                    if(MyApplication.validateOtherLogin(status.getInt("code"),getActivity())) return;
+
+                    if (status.getInt("code") == 200) {
+                        dataUser = response.getJSONObject("obj");
+                    } else {
+                        Toast.makeText(getActivity(), status.getString("description"), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (dataUser != null) {
+//                    Log.e(TAG,"dataUse :"+dataUser.toString());
+                    DependencyInjection.Get(ISqliteRepository.class).clearDetailUser();
+                    try {
+                        String alamat = dataUser.getString(Constants.KEY_ALAMAT);
+                        String nip = dataUser.getString(Constants.KEY_NIP);
+                        String nama = dataUser.getString(Constants.KEY_NAMA);
+                        String noTelp = dataUser.getString(Constants.KEY_NO_TELP_USER);
+                        String email = dataUser.getString(Constants.KEY_EMAIL);
+                        if (dataUser.getString(Constants.KEY_POINT).equalsIgnoreCase(null)) {
+                            point = 0;
+                        }
+                        point = dataUser.getInt(Constants.KEY_POINT);
+                        String tglLahir = dataUser.getString(Constants.KEY_TGL_LAHIR);
+                        String avatar = dataUser.getString(Constants.KEY_AVATAR);
+                        String jmlNasabah = dataUser.getString(Constants.KEY_JUMLAH_NASABAH);
+
+                        DependencyInjection.Get(ISqliteRepository.class).addDetailUser(new DataUser(Integer.parseInt(DependencyInjection.Get(ISessionRepository.class).getId()), nip, alamat, noTelp, email, nama, point, tglLahir, jmlNasabah, avatar));
+
+                        // set view content
+                        txt_profile_jumlah_nasabah.setText(jmlNasabah);
+                        txt_profile_nama.setText(nama);
+                        txt_profile_alamat.setText(alamat);
+                        txt_profile_email.setText(email);
+                        txt_profile_nip.setText(nip);
+                        txt_profile_no_telp.setText(noTelp);
+                        txt_profile_tgl_lahir.setText(tglLahir);
+                        txt_profile_point.setText(String.valueOf(point));
+                        if (!avatar.isEmpty()) {
+                            Picasso.with(getContext())
+                                    .load(Constants.API_IMAGE_AVATAR_URL+avatar)
+                                    .error(R.drawable.profile_user)
+                                    .into(user_profile_photo);
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "Data tidak tersedia !", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.Throwable throwable, JSONObject errorResponse) {
+                if (statusCode == 0) {
+                    Toast.makeText(getActivity(), "Gagal Terkoneksi ke server. (Internet Mati)", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+            }
+        });
+    }
+
     public  String httpPostFile(byte[] file, String url) throws Exception {
         System.out.println("Start Connection " + url);
 
@@ -199,18 +308,18 @@ public class ProfileFragment extends Fragment {
         return responseText;
     }
 
-    public void initData(){
-        DataUser dataUser;
-        dataUser = DependencyInjection.Get(ISqliteRepository.class).getDetailUser();
-        txt_profile_jumlah_nasabah.setText(dataUser.getJumlahNasabah());
-        //txt_profile_nama.setText(dataUser.getNama());
-        txt_profile_alamat.setText(dataUser.getAlamat());
-        txt_profile_email.setText(dataUser.getEmail());
-        txt_profile_nip.setText(dataUser.getNIP());
-        txt_profile_no_telp.setText(dataUser.getNoTlpn());
-        txt_profile_tgl_lahir.setText(dataUser.getTglLahir());
-        txt_profile_point.setText(String.valueOf(dataUser.getPoint()));
-    }
+//    public void initData(){
+//        DataUser dataUser;
+//        dataUser = DependencyInjection.Get(ISqliteRepository.class).getDetailUser();
+//        txt_profile_jumlah_nasabah.setText(dataUser.getJumlahNasabah());
+//        //txt_profile_nama.setText(dataUser.getNama());
+//        txt_profile_alamat.setText(dataUser.getAlamat());
+//        txt_profile_email.setText(dataUser.getEmail());
+//        txt_profile_nip.setText(dataUser.getNIP());
+//        txt_profile_no_telp.setText(dataUser.getNoTlpn());
+//        txt_profile_tgl_lahir.setText(dataUser.getTglLahir());
+//        txt_profile_point.setText(String.valueOf(dataUser.getPoint()));
+//    }
 
     public void logout() {
 

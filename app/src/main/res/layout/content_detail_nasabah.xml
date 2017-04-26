@@ -13,7 +13,8 @@
     tools:context="com.sahaware.resysbni.view.activity.DetailNasabahActivity"
     tools:showIn="@layout/activity_detail_nasabah">
 
-    <ScrollView
+    <!-- ScrollView -->
+    <com.sahaware.resysbni.view.custom.CustomScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -306,6 +307,49 @@
                     android:text="KUR"
                     android:textColor="@android:color/white"
                     android:textSize="18sp" />
+
+            </TableRow>
+            <TableRow
+                android:id="@+id/table_status_line"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:background="@color/grey" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/table_status"
+                android:visibility="gone">
+                <TextView
+                    style="@style/detail_title"
+                    android:text="Update Status" />
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner_status">
+                </Spinner>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/table_status_button"
+                android:visibility="gone">
+                <TextView
+                    style="@style/detail_title"
+                    android:text=" " />
+
+                <Button
+                    android:id="@+id/button_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Update Status"/>
+
             </TableRow>
 
             <TableRow
@@ -335,6 +379,56 @@
                     android:layout_height="wrap_content"
                     android:text="21/05/2016"
                     android:textSize="18sp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/table_dispos_line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorAccent"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_span="2"
+                    android:text="Disposisi Kepada Marketing"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/table_dispos"
+                android:visibility="gone">
+                <TextView
+                    style="@style/detail_title"
+                    android:text="Pilih marketing" />
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner_dispos">
+                </Spinner>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/table_dispos_button"
+                android:visibility="gone">
+                <TextView
+                    style="@style/detail_title"
+                    android:text=" " />
+
+                <Button
+                    android:id="@+id/button_dispos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Update Status"/>
+
             </TableRow>
 
 
@@ -467,7 +561,7 @@
 
                     <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/map"
-                        android:name="com.google.android.gms.maps.MapFragment"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         />
@@ -546,6 +640,7 @@
                         android:tag="img" />
                 </RelativeLayout>
             </TableRow>
+
         </TableLayout>
-    </ScrollView>
+    </com.sahaware.resysbni.view.custom.CustomScrollView>
 </RelativeLayout>

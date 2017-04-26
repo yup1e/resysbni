@@ -72,15 +72,10 @@ public class VerificationActivity extends AppCompatActivity implements DatePicke
                 Calendar now = Calendar.getInstance();
                 int day=1, month=0, year=1980;
                 DatePickerDialog dpd = DatePickerDialog.newInstance(
-                        VerificationActivity.this,
-                        year,
-                        month,
-                        day
+                        VerificationActivity.this, year, month, day
                 );
-                Log.d(TAG, "Date >>>>>>>>>>>>>>>>>>>: " + now.get(Calendar.YEAR) + " - " + now.get(Calendar.MONTH) + " " + now.get(Calendar.DAY_OF_MONTH));
                 dpd.show(getFragmentManager(), "Datepickerdialog");
                 dpd.setMaxDate(now);
-
             }
         });
 
@@ -90,9 +85,11 @@ public class VerificationActivity extends AppCompatActivity implements DatePicke
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_verify:
-                progressDialog.show();
-                validate();
-                saveDataVerification();
+
+                if (validate()) {
+                    progressDialog.show();
+                    saveDataVerification();
+                }
                 break;
         }
     }
@@ -104,9 +101,6 @@ public class VerificationActivity extends AppCompatActivity implements DatePicke
         verifyEmailStr = verifyEmailText.getText().toString();
         verifyPhoneStr = verifyPhone.getText().toString();
         verifyTanggalLahirStr = verifyTanggalLahir.getText().toString();
-
-
-
 
         if (verifyEmailStr.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(verifyEmailStr).matches()) {
             verifyEmailText.setError("Tolong masukkan alamt email dengan benar !");
@@ -134,6 +128,13 @@ public class VerificationActivity extends AppCompatActivity implements DatePicke
             valid = false;
         } else {
             verifyPhone.setError(null);
+        }
+
+        if (verifyTanggalLahirStr.isEmpty()) {
+            verifyTanggalLahir.setError("Tanggal Lahir wajid di isi !");
+            valid = false;
+        } else {
+            verifyTanggalLahir.setError(null);
         }
 
         return valid;
@@ -197,10 +198,9 @@ public class VerificationActivity extends AppCompatActivity implements DatePicke
 
             @Override
             public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, JSONObject response) {
-                progressDialog.hide();
-                Log.d(TAG, "onSuccessObject: "+String.valueOf(statusCode));
-                Log.d(TAG, "onSuccessObject: "+headers);
-                Log.d(TAG, "onSuccessObject: "+response);
+                Log.e(TAG, "onSuccessObject: "+String.valueOf(statusCode));
+                Log.e(TAG, "onSuccessObject: "+headers);
+                Log.e(TAG, "onSuccessObject: "+response);
                 JSONObject jo;
                 Boolean status = false, flag = false;
                 String nip = null,
@@ -243,7 +243,7 @@ public class VerificationActivity extends AppCompatActivity implements DatePicke
                 }else{
                     Toast.makeText(VerificationActivity.this, "data tidak ditemukan", Toast.LENGTH_SHORT).show();
                 }
-
+                progressDialog.hide();
             }
 
             @Override

@@ -25,11 +25,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Base64;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -52,6 +55,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -64,6 +69,7 @@ import com.sahaware.resysbni.entity.DataJenisReveral;
 import com.sahaware.resysbni.entity.DataKantor;
 import com.sahaware.resysbni.entity.NasabahEntity;
 import com.sahaware.resysbni.helper.DependencyInjection;
+import com.sahaware.resysbni.helper.MyApplication;
 import com.sahaware.resysbni.repository.ISessionRepository;
 import com.sahaware.resysbni.repository.ISqliteRepository;
 import com.sahaware.resysbni.util.Constants;
@@ -76,6 +82,7 @@ import com.sahaware.resysbni.view.adapter.ListKantorAdapter;
 import com.sahaware.resysbni.view.adapter.ListNasabahAdapter;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -110,7 +117,7 @@ import dmax.dialog.SpotsDialog;
 import info.hoang8f.widget.FButton;
 
 
-public class SubmitFragment extends Fragment {
+public class SubmitFragment extends Fragment implements OnMapReadyCallback {
 
     @BindView(R.id.txt_submit_no_ktp)
     TextView txt_submit_no_ktp;
@@ -171,7 +178,9 @@ public class SubmitFragment extends Fragment {
             str_agunan,
             str_kantor,
             str_img1,
-            str_img2;
+            str_img2,
+            str_img164,
+            str_img264;
     int MY_PERMISSIONS_REQUEST_READ_AND_WRITE_EXTERNAL_STORAGE;
     private FragmentActivity myContext;
     private GoogleMap mMap;
@@ -184,7 +193,7 @@ public class SubmitFragment extends Fragment {
     private String selectedImagePath, namaKantor;
     protected static final int CAMERA_REQUEST = 0;
     protected static final int GALLERY_PICTURE = 1;
-    private String TAG = "Submit Referral";
+    private String TAG = "SubmitFragment";
     private double userLat = -6.911339, userLng = 107.6068856, jarak; //default bandung
     private MapView mMapView;
     private LatLng user, kantor, usaha;
@@ -205,6 +214,7 @@ public class SubmitFragment extends Fragment {
     RadioButton r;
     int idNasabah;
     boolean statusSent = false, statusresult = false;
+    private static View view;
 
     public SubmitFragment() {
         listKantorRadius = new ArrayList<>();
@@ -231,10 +241,21 @@ public class SubmitFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.e(TAG,"onCreateView");
 
-        View view = inflater.inflate(R.layout.fragment_submit_data_nasabah, container, false);
+        if (view != null) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent != null)
+                parent.removeView(view);
+        }
+        try {
+            view = inflater.inflate(R.layout.fragment_submit_data_nasabah, container, false);
+        } catch (InflateException e) {
+        /* map is already there, just return view as it is */
+        }
+
+//        View view = inflater.inflate(R.layout.fragment_submit_data_nasabah, container, false);
         ButterKnife.bind(this, view);
         mainScrollView = (ScrollView) view.findViewById(R.id.main_scrollview);
         transparentImageView = (ImageView) view.findViewById(R.id.transparent_image);
@@ -265,7 +286,9 @@ public class SubmitFragment extends Fragment {
                 }
             }
         });
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
         } else {
@@ -274,12 +297,8 @@ public class SubmitFragment extends Fragment {
 
             // Check if GPS enabled
             if (gps.canGetLocation()) {
-
                 userLat = gps.getLatitude();
                 userLng = gps.getLongitude();
-
-                // \n is for new line
-                //Toast.makeText(getActivity().getApplicationContext(), "Your Location is - \nLat: " + userLat + "\nLong: " + userLng, Toast.LENGTH_LONG).show();
             } else {
                 // Can't get location.
                 // GPS or network is not enabled.
@@ -287,116 +306,120 @@ public class SubmitFragment extends Fragment {
                 gps.showSettingsAlert();
             }
         }
-        //===================================================================================================
 
-        mMapView = (MapView) view.findViewById(R.id.map);
-        mMapView.onCreate(savedInstanceState);
-        mMapView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_MOVE:
-                        hsv.requestDisallowInterceptTouchEvent(true);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        hsv.requestDisallowInterceptTouchEvent(false);
-                        break;
-                }
-                return mMapView.onTouchEvent(event);
-            }
-        });
-        mMap = mMapView.getMap();
+        if (mMap == null) {
+            FragmentManager myFM = this.getChildFragmentManager();
+            final SupportMapFragment mapFragment = (SupportMapFragment) myFM.findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
+        }
 
-        mMapView.onResume();// needed to get the map to display immediately
-
+//        mMapView = (MapView) view.findViewById(R.id.map);
+//        mMapView.onCreate(savedInstanceState);
+//        mMapView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_MOVE:
+//                        hsv.requestDisallowInterceptTouchEvent(true);
+//                        break;
+//                    case MotionEvent.ACTION_UP:
+//                    case MotionEvent.ACTION_CANCEL:
+//                        hsv.requestDisallowInterceptTouchEvent(false);
+//                        break;
+//                }
+//                return mMapView.onTouchEvent(event);
+//            }
+//        });
+//        mMap = mMapView.getMap();
+//        mMap = mMapView.getMapAsync(this);
+//        mMapView.onResume();// needed to get the map to display immediately
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        user = new LatLng(userLat, userLng);
-        usaha = user;
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return null;
-        }
-        if (mMap != null) {
-            mMap.setMyLocationEnabled(true);
+//        user = new LatLng(userLat, userLng);
+//        usaha = user;
 
-           // Toast.makeText(getContext(), listKantor.size() + "", Toast.LENGTH_LONG).show();
+//        cek permission ini masih bermasalah di bawah android 5
+//        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            return null;
+//        }
 
-            if (listKantor != null) {
-                for (DataKantor dataKantor : listKantor) {
-                    double xDiff = userLat - Double.parseDouble(dataKantor.getLan());
-                    double xSqr = Math.pow(xDiff, 2);
+//        if (mMap != null) {
+//            mMap.setMyLocationEnabled(true);
 
-                    double yDiff = userLng - Double.parseDouble(dataKantor.getLon());
-                    double ySqr = Math.pow(yDiff, 2);
-                    //INI RUMUS EUCLIDIAN DISTANCE UNTUK MENENTUKAN JARAK
-                    jarak = Math.sqrt(xSqr + ySqr);
-                    jarak = jarak * 111.11;
-                    if (jarakTerdekat > jarak) {
-                        jarakTerdekat = jarak;
-                        namaKantor = dataKantor.getNama();
-                        dataKantorTerdekat = dataKantor;
-                    }
-                    dataKantor.setJarak(String.valueOf(new DecimalFormat("##").format(jarak)));
-                    if (!dataKantor.getJenisKantor().equalsIgnoreCase("UMUM") && jarak <= 10) {
-                        //String jarakStr = String.valueOf(new DecimalFormat("##").format(jarak));
-                        listKantorRadius.add(dataKantor);
-                        mMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(Double.parseDouble(dataKantor.getLan()), Double.parseDouble(dataKantor.getLon())))
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.kantor))
-                                .title(dataKantor.getNama())
-                                .snippet(dataKantor.getAlamat()));
-                        Circle circle = mMap.addCircle(new CircleOptions()
-                                .center(user)
-                                .radius(50 * 1000)
-                                .strokeWidth(1)
-                                .strokeColor(Color.RED)
-                                .fillColor(Color.argb(10, 220, 237, 200)));
-                        circle.setVisible(true);
-                        //http://stackoverflow.com/questions/14326482/android-maps-v2-polygon-transparency
-                    } else if (listKantorRadius.isEmpty() && dataKantor.getJenisKantor().equalsIgnoreCase("skc")) {
-                        if (jarakTemp < jarak) {
+//            if (listKantor != null) {
+//                for (DataKantor dataKantor : listKantor) {
+//                    double xDiff = userLat - Double.parseDouble(dataKantor.getLan());
+//                    double xSqr = Math.pow(xDiff, 2);
+//
+//                    double yDiff = userLng - Double.parseDouble(dataKantor.getLon());
+//                    double ySqr = Math.pow(yDiff, 2);
+//                    //INI RUMUS EUCLIDIAN DISTANCE UNTUK MENENTUKAN JARAK
+//                    jarak = Math.sqrt(xSqr + ySqr);
+//                    jarak = jarak * 111.11;
+//                    if (jarakTerdekat > jarak) {
+//                        jarakTerdekat = jarak;
+//                        namaKantor = dataKantor.getNama();
+//                        dataKantorTerdekat = dataKantor;
+//                    }
+//                    dataKantor.setJarak(String.valueOf(new DecimalFormat("##").format(jarak)));
+//                    if (!dataKantor.getJenisKantor().equalsIgnoreCase("UMUM") && jarak <= 10) {
+//                        //String jarakStr = String.valueOf(new DecimalFormat("##").format(jarak));
+//                        listKantorRadius.add(dataKantor);
+//                        mMap.addMarker(new MarkerOptions()
+//                                .position(new LatLng(Double.parseDouble(dataKantor.getLan()), Double.parseDouble(dataKantor.getLon())))
+//                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.kantor))
+//                                .title(dataKantor.getNama())
+//                                .snippet(dataKantor.getAlamat()));
+//                        Circle circle = mMap.addCircle(new CircleOptions()
+//                                .center(user)
+//                                .radius(50 * 1000)
+//                                .strokeWidth(1)
+//                                .strokeColor(Color.RED)
+//                                .fillColor(Color.argb(10, 220, 237, 200)));
+//                        circle.setVisible(true);
+//                        //http://stackoverflow.com/questions/14326482/android-maps-v2-polygon-transparency
+//                    } else if (listKantorRadius.isEmpty() && dataKantor.getJenisKantor().equalsIgnoreCase("skc")) {
+//                        if (jarakTemp < jarak) {
+//
+//                        } else {
+//                            jarakTemp = jarak;
+//                            dataKantorTemp = dataKantor;
+//                        }
+//                    }
+//                }
+//                if (dataKantorTemp != null) {
+//                    listKantorRadius.add(dataKantorTemp);
+//                    mMap.addMarker(new MarkerOptions()
+//                            .position(new LatLng(Double.parseDouble(dataKantorTemp.getLan()), Double.parseDouble(dataKantorTemp.getLon())))
+//                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.kantor))
+//                            .title(dataKantorTemp.getNama())
+//                            .snippet(dataKantorTemp.getAlamat()));
+//                    Circle circle = mMap.addCircle(new CircleOptions()
+//                            .center(user)
+//                            .radius(50 * 1000)
+//                            .strokeWidth(1)
+//                            .strokeColor(Color.RED)
+//                            .fillColor(Color.argb(10, 220, 237, 200)));
+//                    circle.setVisible(true);
+//                }
+//            }
+//            txt_rekomendasi_kantor.setText(namaKantor);
+//            txt_rekomendasi_kantor.setTag(dataKantorTerdekat.getIDKantor());
 
-                        } else {
-                            jarakTemp = jarak;
-                            dataKantorTemp = dataKantor;
-                        }
+//            mMap.addMarker(new MarkerOptions()
+//                    .position(user)
+//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.user))
+//                    .title("Lokasi Anda"));
+//            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((user), 15);
+//            //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((user), 45));
+//            mMap.animateCamera(cameraUpdate);
+//            // Adding Marker on the touched location with address
+//            new ReverseGeocodingTask(getContext()).execute(user);
+//        }
 
-
-                    }
-                }
-                if (dataKantorTemp != null) {
-                    listKantorRadius.add(dataKantorTemp);
-                    mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(Double.parseDouble(dataKantorTemp.getLan()), Double.parseDouble(dataKantorTemp.getLon())))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.kantor))
-                            .title(dataKantorTemp.getNama())
-                            .snippet(dataKantorTemp.getAlamat()));
-                    Circle circle = mMap.addCircle(new CircleOptions()
-                            .center(user)
-                            .radius(50 * 1000)
-                            .strokeWidth(1)
-                            .strokeColor(Color.RED)
-                            .fillColor(Color.argb(10, 220, 237, 200)));
-                    circle.setVisible(true);
-                }
-            }
-            txt_rekomendasi_kantor.setText(namaKantor);
-            txt_rekomendasi_kantor.setTag(dataKantorTerdekat.getIDKantor());
-
-            mMap.addMarker(new MarkerOptions()
-                    .position(user)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.user))
-                    .title("Lokasi Anda"));
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom((user), 15);
-            //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((user), 45));
-            mMap.animateCamera(cameraUpdate);
-            // Adding Marker on the touched location with address
-            new ReverseGeocodingTask(getContext()).execute(user);
-        }
         LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -404,10 +427,8 @@ public class SubmitFragment extends Fragment {
         progressDialog = new SpotsDialog(getActivity(), "Request data...");
         Resources res = getResources();
 
-
         adapterJenis = new ListJenisPinjamanAdapter(getActivity(), R.layout.spinner_rows, listJenis, res);
         spn_jenis_kredit.setAdapter(adapterJenis);
-
 
         adapterKantor = new ListKantorAdapter(getActivity(), R.layout.spinner_rows, listKantorRadius, res);
         spn_kantor.setAdapter(adapterKantor);
@@ -462,13 +483,13 @@ public class SubmitFragment extends Fragment {
             }
         });
 
-        /*if (mMap == null) {
-            mMap = ((SupportMapFragment) getActivity().getSupportFragmentManager()
-                    .findFragmentById(R.id.map)).getMap();
-        }*/
-        /*SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);*/
+//        if (mMap == null) {
+//            mMap = ((SupportMapFragment) getActivity().getSupportFragmentManager()
+//                    .findFragmentById(R.id.map)).getMap();
+//        }
+//        SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
         return view;
     }
 
@@ -552,19 +573,15 @@ public class SubmitFragment extends Fragment {
                     .input("", null, false, new MaterialDialog.InputCallback() {
                         @Override
                         public void onInput(MaterialDialog dialog, CharSequence input) {
-                            progressDialog = new SpotsDialog(getActivity(), "Cek Nomor KTP...");
                             String ktp = input.toString();
-                            progressDialog.show();
                             CheckKTP(ktp);
-                            /*new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressDialog.dismiss();
-                                    Toast.makeText(getActivity(), "KTP belum terdaftar", Toast.LENGTH_SHORT).show();
-                                }
-                            }, SPLASH_TIME_OUT);*/
-
-
+//                            new Handler().postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    progressDialog.dismiss();
+//                                    Toast.makeText(getActivity(), "KTP belum terdaftar", Toast.LENGTH_SHORT).show();
+//                                }
+//                            }, SPLASH_TIME_OUT);
                         }
                     })
                     .cancelListener(new DialogInterface.OnCancelListener() {
@@ -580,13 +597,11 @@ public class SubmitFragment extends Fragment {
         }
     }
 
-
     @OnClick({R.id.img_submit_location_1,
             R.id.img_submit_location_2,
             R.id.btn_submit_data_nasabah,
             R.id.rgJenis})
     public void onClick(View view) {
-        Intent cameraIntent;
         switch (view.getId()) {
             case R.id.img_submit_location_1:
                 if ((ContextCompat.checkSelfPermission(getActivity(),
@@ -623,15 +638,17 @@ public class SubmitFragment extends Fragment {
                 startDialog();
                 break;
             case R.id.btn_submit_data_nasabah:
-                btn_submit_data_nasabah.setEnabled(false);
-
-                //new AddImageTask().execute();
-                InitValue();
+                try {
+                    InitValue();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }
 
-    public void InitValue() {
+    public void InitValue() throws FileNotFoundException {
+        Boolean valid = true;
         String sla = "0 Hari yang lalu";
         str_no_ktp = txt_submit_no_ktp.getText().toString();
         str_nama = edt_submit_nama.getText().toString();
@@ -648,57 +665,78 @@ public class SubmitFragment extends Fragment {
         View radioButton = rgJenis.findViewById(RadioBtnId);
         int idx = rgJenis.indexOfChild(radioButton);
         r = (RadioButton) rgJenis.getChildAt(idx);
-        if (img_submit_location_1.getTag().toString().equalsIgnoreCase("img"))
-            str_img1 = null;
-        else
+
+        // define image 1
+        if (img_submit_location_1.getTag()==null || img_submit_location_1.getTag().toString().equalsIgnoreCase("img")) {
+            str_img1 = str_img164 = null;
+        }else {
             str_img1 = img_submit_location_1.getTag().toString();
-
-        if (img_submit_location_2.getTag().toString().equalsIgnoreCase("img"))
-            str_img2 = null;
-        else
+            str_img164 = getEncoded64ImageString(str_img1);
+        }
+        // define image 2
+        if (img_submit_location_2.getTag()==null || img_submit_location_2.getTag().toString().equalsIgnoreCase("img")) {
+            str_img2 = str_img264 = null;
+        }else {
             str_img2 = img_submit_location_2.getTag().toString();
+            str_img264 = getEncoded64ImageString(str_img2);
+        }
 
-        if (str_nama.equals(null)) {
+        if (str_nama.isEmpty()) {
             edt_submit_nama.setError("Nama wajib di isi !");
-        } else if (str_alamat.equals(null)) {
+            valid = false;
+        }
+        if (str_alamat.isEmpty()) {
             edt_submit_alamat.setError("Alamat wajib di isi !");
-        } else if (str_no_hp.equals(null)) {
+            valid = false;
+        }
+        if (str_no_hp.isEmpty()) {
             edt_submit_nope.setError("No. HP wajib di isi !");
-        } else if (str_sektor_usaha.equals(null)) {
+            valid = false;
+        }
+        if (str_sektor_usaha.isEmpty()) {
             edt_submit_sektor_usaha.setError("Sektor usaha wajib di isi !");
-        } else if (str_lama_usaha.equals(null)) {
+            valid = false;
+        }
+        if (str_lama_usaha.isEmpty()) {
             edt_submit_lama_usaha.setError("Lama usaha wajib di isi !");
-        } else if (rgJenis.getCheckedRadioButtonId() <= 0) {
+            valid = false;
+        }
+        if (rgJenis.getCheckedRadioButtonId() <= 0) {
             rbKUR.setError("Jenis Kredit wajib d isi !");
-        } else if (str_jumlah_kredit.equals(null) || str_jumlah_kredit.equals("")) {
+            valid = false;
+        }
+        if (str_jumlah_kredit.isEmpty()) {
             str_jumlah_kredit = "0";
-
             // edt_submit_kredit_jumlah.setError("Jumlah kredit wajib di isi !");
-        } else if (str_agunan.equals(null) || str_agunan.equals("")) {
+        }
+        if (str_agunan.isEmpty()) {
             str_agunan = "";
             //edt_submit_kredit_agunan.setError("Agunan wajib di isi !");
-        } else if (str_kantor.equals(null) || str_kantor.equals("")) {
+        }
+        if (str_kantor.isEmpty() || str_kantor.equals("")) {
             str_kantor = "1"; // set default untuk edc dan laku pandai
+        }
+        if(valid){
+            btn_submit_data_nasabah.setEnabled(false);
 
-        } else {
-            Calendar c = Calendar.getInstance();
-            Double latUsaha = 0.0;
-            Double langUsaha = 0.0;
-            if (!Double.isNaN(usaha.latitude)) {
-                latUsaha = usaha.latitude;
-            }
-            if (!Double.isNaN(usaha.longitude)) {
-                langUsaha = usaha.longitude;
-            }
-            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-            String formattedDate = df.format(c.getTime());
-            NasabahEntity nb = new NasabahEntity(str_no_ktp, str_nama, str_alamat, str_no_hp, str_sektor_usaha,
-                    str_lama_usaha, r.getTag().toString(), str_jumlah_kredit, str_agunan,
-                    str_kantor, formattedDate
-                    , "Open", str_img1, str_img2, latUsaha, langUsaha, sla);
-
-            //save to local data by zul : tidak perlu simpan ke lokal dulu
-            DependencyInjection.Get(ISqliteRepository.class).addNasabahTemp(nb);
+//            // save to local data by zul : tidak perlu simpan ke lokal dulu, hanya simpan jika response berhasil dr server
+//            // sementara di eksekusi dahulu krn hrs ambil data iduser local utk di upload ke server --> kenapa pakai idlocal??
+//            Calendar c = Calendar.getInstance();
+//            Double latUsaha = 0.0;
+//            Double langUsaha = 0.0;
+//            if (!Double.isNaN(usaha.latitude)) {
+//                latUsaha = usaha.latitude;
+//            }
+//            if (!Double.isNaN(usaha.longitude)) {
+//                langUsaha = usaha.longitude;
+//            }
+//            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+//            String formattedDate = df.format(c.getTime());
+//            NasabahEntity nb = new NasabahEntity(
+//                    str_no_ktp, str_nama, str_alamat, str_no_hp, str_sektor_usaha,
+//                    str_lama_usaha, r.getTag().toString(), str_jumlah_kredit, str_agunan,
+//                    str_kantor, formattedDate, "Open", str_img1, str_img2, latUsaha, langUsaha, sla);
+//            DependencyInjection.Get(ISqliteRepository.class).addNasabahTemp(nb);
 
             SaveDataNasabah();
         }
@@ -707,12 +745,12 @@ public class SubmitFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-       /* if (mMap != null) {
-            MainActivity.fragmentManager.beginTransaction()
-                    .remove(MainActivity.fragmentManager.findFragmentById(R.id.map)).commit();
-            mMap = null;
-        }*/
-        //unbinder.unbind();
+//        if (mMap != null) {
+//            MainActivity.fragmentManager.beginTransaction()
+//                    .remove(MainActivity.fragmentManager.findFragmentById(R.id.map)).commit();
+//            mMap = null;
+//        }
+//        unbinder.unbind();
     }
 
     private void startDialog() {
@@ -833,12 +871,17 @@ public class SubmitFragment extends Fragment {
         JSONObject jsonParams = new JSONObject();
         StringEntity entity = null;
 
+        ArrayList<String> listRef = new ArrayList<String>();
+        listRef.add(r.getTag().toString());
+
         try {
             jsonParams.put("Alamat", str_alamat);
             jsonParams.put("Anggunan", str_agunan);
             jsonParams.put("IDKantor", txt_rekomendasi_kantor.getTag());
-            jsonParams.put("IDReveral", r.getTag());
-            JSONObject idUser = jsonParams.put("IDUser", DependencyInjection.Get(ISessionRepository.class).getId());
+            jsonParams.put("IDReveral", new JSONArray(listRef));
+            jsonParams.put("IDUser", DependencyInjection.Get(ISessionRepository.class).getId());
+            jsonParams.put("Image1", str_img164);
+            jsonParams.put("Image2", str_img264);
             jsonParams.put("JmlhKredit", Double.parseDouble(str_jumlah_kredit));
             jsonParams.put("KTP", txt_submit_no_ktp.getText().toString());
             jsonParams.put("LamaUsaha", str_lama_usaha);
@@ -849,11 +892,14 @@ public class SubmitFragment extends Fragment {
             jsonParams.put("SektorUsaha", str_sektor_usaha);
             jsonParams.put("token", DependencyInjection.Get(ISessionRepository.class).getToken());
             entity = new StringEntity(jsonParams.toString());
-            Log.d(TAG, "SaveDataNasabah: " + jsonParams.toString());
             entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+            Log.e(TAG, "VarDataNasabah: " + jsonParams);
+
         } catch (JSONException e) {
+            Log.e(TAG, "VarDataNasabah: JSONException");
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "VarDataNasabah: UnsupportedEncodingException");
             e.printStackTrace();
         }
         AsyncHttpClient client = new AsyncHttpClient();
@@ -887,37 +933,38 @@ public class SubmitFragment extends Fragment {
                         e.printStackTrace();
                     }
                     progressDialogSave.dismiss();
-                    new AddImageTask().execute();
-                    /*DependencyInjection.Get(ISqliteRepository.class).clearNasabah();
+//                    new AddImageTask().execute();
+                    DependencyInjection.Get(ISqliteRepository.class).clearNasabah();
                     DependencyInjection.Get(ISqliteRepository.class).clearNasabahTemp();
                     Toast.makeText(getActivity(), "Data Berhasil Disimpan.", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     startActivity(intent);
-                    getActivity().finish();*/
+                    getActivity().finish();
                 } else {
                     progressDialogSave.dismiss();
                     Toast.makeText(getActivity(), "Terjadi kesalahan pada server.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG,"status failed : "+response.toString());
                 }
             }
 
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.Throwable throwable, org.json.JSONArray errorResponse) {
                 progressDialogSave.dismiss();
-                Toast.makeText(getActivity(), "Code " + String.valueOf(statusCode) + "\n Response " + errorResponse, Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "onFailure: " + String.valueOf(statusCode));
-                Log.d(TAG, "onFailure: " + headers);
-                Log.d(TAG, "onFailure: " + throwable);
-                Log.d(TAG, "onFailure: " + errorResponse);
+                Toast.makeText(getActivity(), "Terjadi kesalahan koneksi.", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "onFailure -> statusCode : " + String.valueOf(statusCode));
+                Log.e(TAG, "onFailure -> headers : " + headers);
+                Log.e(TAG, "onFailure -> throwable : " + throwable);
+                Log.e(TAG, "onFailure -> errorResponse : " + errorResponse);
             }
 
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.String responseString, java.lang.Throwable throwable) {
                 progressDialogSave.dismiss();
-                Toast.makeText(getActivity(), "Code " + String.valueOf(statusCode) + "\n Response " + responseString, Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "onFailure: " + String.valueOf(statusCode));
-                Log.d(TAG, "onFailure: " + headers);
-                Log.d(TAG, "onFailure: " + throwable);
-                Log.d(TAG, "onFailure: " + responseString);
+                Toast.makeText(getActivity(), "Terjadi kesahalah koneksi", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "onFailure -> statusCode : " + String.valueOf(statusCode));
+                Log.e(TAG, "onFailure -> headers : " + headers);
+                Log.e(TAG, "onFailure -> throwable : " + throwable);
+                Log.e(TAG, "onFailure -> responseString : " + responseString);
             }
 
             @Override
@@ -927,8 +974,18 @@ public class SubmitFragment extends Fragment {
         });
     }
 
-    public void CheckKTP(final String ktp) {
+    private String getEncoded64ImageString(String file) throws FileNotFoundException {
+        FileInputStream fis = new FileInputStream(file);
+        Bitmap bitmap = BitmapFactory.decodeStream(fis);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
+        byte[] byteFormat = stream.toByteArray();
+        String imgString = Base64.encodeToString(byteFormat, Base64.NO_WRAP);
+        return imgString;
+    }
 
+    public void CheckKTP(final String ktp) {
+        progressDialog = new SpotsDialog(getActivity(), "Cek Nomor KTP...");
         progressDialog.show();
         final int DEFAULT_TIMEOUT = 40 * 1000;
         JSONObject jsonParams = new JSONObject();
@@ -952,23 +1009,26 @@ public class SubmitFragment extends Fragment {
 
             @Override
             public void onStart() {
-                if (progressDialog != null)
-                    progressDialog.dismiss();
             }
 
             @Override
             public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, JSONObject response) {
-
+                Log.e(TAG,"CEK KTP: "+response.toString());
                 JSONObject jo, obj = null;
                 Boolean status = false;
-                try {
+
+                if(!response.isNull("obj")) {
                     try {
                         obj = response.getJSONObject("obj");
                     } catch (JSONException e) {
-                        obj = null;
+                        e.printStackTrace();
                     }
+                }
+
+                try {
                     jo = response.getJSONObject(Constants.KEY_STATUS);
                     status = jo.getBoolean(Constants.KEY_SUCCESS);
+                    if(MyApplication.validateOtherLogin(jo.getInt("code"),getActivity())) return;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -977,8 +1037,8 @@ public class SubmitFragment extends Fragment {
                     if (obj != null) {
                         progressDialog.dismiss();
                         try {
-                            final String[] img1 = new String[1];
-                            final String[] img2 = new String[1];
+//                            final String[] img1 = new String[1];
+//                            final String[] img2 = new String[1];
                             final JSONObject finalObj = obj;
                             new MaterialDialog.Builder(getActivity())
                                     .backgroundColor(Color.rgb(254, 253, 252))
@@ -1001,36 +1061,41 @@ public class SubmitFragment extends Fragment {
                                             Intent intent = new Intent(getActivity(), DetailNasabahActivity.class);
                                             Bundle bundle = new Bundle();
                                             try {
-                                                bundle.putString(Constants.KEY_TANGGAL_SUBMIT, finalObj.getString(Constants.KEY_TANGGAL_SUBMIT));
-                                                bundle.putString(Constants.KEY_NAMA_REVERAL, finalObj.getString(Constants.KEY_NAMA_REVERAL));
-                                                bundle.putString(Constants.KEY_ANGGUNAN, finalObj.getString(Constants.KEY_ANGGUNAN));
-                                                bundle.putDouble(Constants.KEY_LAT, finalObj.getDouble(Constants.KEY_LAT));
-                                                bundle.putString(Constants.KEY_JUMLAH_KREDIT, finalObj.getString(Constants.KEY_JUMLAH_KREDIT));
-                                                bundle.putString(Constants.KEY_ALAMAT, finalObj.getString(Constants.KEY_ALAMAT));
-                                                bundle.putString(Constants.KEY_NO_TELP, finalObj.getString(Constants.KEY_NO_TELP));
-                                                bundle.putString(Constants.KEY_NAMA_USER, finalObj.getString(Constants.KEY_NAMA_USER));
-                                                bundle.putString(Constants.KEY_NAMA_STATUS, finalObj.getString(Constants.KEY_NAMA_STATUS));
-                                                bundle.putString(Constants.KEY_LAMA_USAHA, finalObj.getString(Constants.KEY_LAMA_USAHA));
-                                                bundle.putString(Constants.KEY_KANTOR, finalObj.getString(Constants.KEY_KANTOR));
-                                                bundle.putString(Constants.KEY_NAMA, finalObj.getString(Constants.KEY_NAMA));
-                                                bundle.putDouble(Constants.KEY_LONG, finalObj.getDouble(Constants.KEY_LONG));
-                                                bundle.putString(Constants.KEY_KTP, finalObj.getString(Constants.KEY_KTP));
-                                                bundle.putString(Constants.KEY_SEKTOR_USAHA, finalObj.getString(Constants.KEY_SEKTOR_USAHA));
-                                                try {
-                                                    JSONObject image = finalObj.getJSONObject("Image");
-
-                                                    img1[0] = image.getString(finalObj.getString(Constants.KEY_IMAGE_1));
-                                                    img2[0] = image.getString(finalObj.getString(Constants.KEY_IMAGE_2));
-
-                                                } catch (JSONException e) {
-                                                    img1[0] = null;
-                                                    img2[0] = null;
-                                                }
-                                                bundle.putString(Constants.KEY_IMAGE_1, img1[0]);
-                                                bundle.putString(Constants.KEY_IMAGE_2, img2[0]);
+                                                bundle.putInt(Constants.KEY_ID, finalObj.getInt("IDNasabah"));
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
                                             }
+//                                            try {
+//                                                bundle.putString(Constants.KEY_TANGGAL_SUBMIT, finalObj.getString(Constants.KEY_TANGGAL_SUBMIT));
+//                                                bundle.putString(Constants.KEY_NAMA_REVERAL, finalObj.getString(Constants.KEY_NAMA_REVERAL));
+//                                                bundle.putString(Constants.KEY_ANGGUNAN, finalObj.getString(Constants.KEY_ANGGUNAN));
+//                                                bundle.putDouble(Constants.KEY_LAT, finalObj.getDouble(Constants.KEY_LAT));
+//                                                bundle.putString(Constants.KEY_JUMLAH_KREDIT, finalObj.getString(Constants.KEY_JUMLAH_KREDIT));
+//                                                bundle.putString(Constants.KEY_ALAMAT, finalObj.getString(Constants.KEY_ALAMAT));
+//                                                bundle.putString(Constants.KEY_NO_TELP, finalObj.getString(Constants.KEY_NO_TELP));
+//                                                bundle.putString(Constants.KEY_NAMA_USER, finalObj.getString(Constants.KEY_NAMA_USER));
+//                                                bundle.putString(Constants.KEY_NAMA_STATUS, finalObj.getString(Constants.KEY_NAMA_STATUS));
+//                                                bundle.putString(Constants.KEY_LAMA_USAHA, finalObj.getString(Constants.KEY_LAMA_USAHA));
+//                                                bundle.putString(Constants.KEY_KANTOR, finalObj.getString(Constants.KEY_KANTOR));
+//                                                bundle.putString(Constants.KEY_NAMA, finalObj.getString(Constants.KEY_NAMA));
+//                                                bundle.putDouble(Constants.KEY_LONG, finalObj.getDouble(Constants.KEY_LONG));
+//                                                bundle.putString(Constants.KEY_KTP, finalObj.getString(Constants.KEY_KTP));
+//                                                bundle.putString(Constants.KEY_SEKTOR_USAHA, finalObj.getString(Constants.KEY_SEKTOR_USAHA));
+//                                                try {
+//                                                    JSONObject image = finalObj.getJSONObject("Image");
+//
+//                                                    img1[0] = image.getString(finalObj.getString(Constants.KEY_IMAGE_1));
+//                                                    img2[0] = image.getString(finalObj.getString(Constants.KEY_IMAGE_2));
+//
+//                                                } catch (JSONException e) {
+//                                                    img1[0] = null;
+//                                                    img2[0] = null;
+//                                                }
+//                                                bundle.putString(Constants.KEY_IMAGE_1, img1[0]);
+//                                                bundle.putString(Constants.KEY_IMAGE_2, img2[0]);
+//                                            } catch (JSONException e) {
+//                                                e.printStackTrace();
+//                                            }
                                             intent.putExtras(bundle);
                                             startActivity(intent);
                                             getActivity().finish();
@@ -1058,6 +1123,9 @@ public class SubmitFragment extends Fragment {
                 } else {
                     progressDialog.dismiss();
                     Toast.makeText(getActivity(), "Terjadi kesalahan koneksi ke server, silahkan coba lagi", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    startActivity(intent);
+                    myContext.finish();
                 }
             }
 
@@ -1092,6 +1160,86 @@ public class SubmitFragment extends Fragment {
                 // called when request is retried
             }
         });
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // user location
+        user = new LatLng(userLat, userLng);
+        mMap.addMarker(new MarkerOptions()
+                .position(user)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.user))
+                .title("Lokasi Anda"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(user,15));
+        // Adding Marker on the touched location with address
+        new ReverseGeocodingTask(getContext()).execute(user);
+
+
+        // office location
+        usaha = user;
+        if (listKantor != null) {
+            for (DataKantor dataKantor : listKantor) {
+                double xDiff = userLat - Double.parseDouble(dataKantor.getLan());
+                double xSqr = Math.pow(xDiff, 2);
+
+                double yDiff = userLng - Double.parseDouble(dataKantor.getLon());
+                double ySqr = Math.pow(yDiff, 2);
+                //INI RUMUS EUCLIDIAN DISTANCE UNTUK MENENTUKAN JARAK
+                jarak = Math.sqrt(xSqr + ySqr);
+                jarak = jarak * 111.11;
+                if (jarakTerdekat > jarak) {
+                    jarakTerdekat = jarak;
+                    namaKantor = dataKantor.getNama();
+                    dataKantorTerdekat = dataKantor;
+                }
+                dataKantor.setJarak(String.valueOf(new DecimalFormat("##").format(jarak)));
+                if (!dataKantor.getJenisKantor().equalsIgnoreCase("UMUM") && jarak <= 10) {
+                    //String jarakStr = String.valueOf(new DecimalFormat("##").format(jarak));
+                    listKantorRadius.add(dataKantor);
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(dataKantor.getLan()), Double.parseDouble(dataKantor.getLon())))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.kantor))
+                            .title(dataKantor.getNama())
+                            .snippet(dataKantor.getAlamat()));
+                    Circle circle = mMap.addCircle(new CircleOptions()
+                            .center(user)
+                            .radius(50 * 1000)
+                            .strokeWidth(1)
+                            .strokeColor(Color.RED)
+                            .fillColor(Color.argb(10, 220, 237, 200)));
+                    circle.setVisible(true);
+                    //http://stackoverflow.com/questions/14326482/android-maps-v2-polygon-transparency
+                } else if (listKantorRadius.isEmpty() && dataKantor.getJenisKantor().equalsIgnoreCase("skc")) {
+                    if (jarakTemp < jarak) {
+
+                    } else {
+                        jarakTemp = jarak;
+                        dataKantorTemp = dataKantor;
+                    }
+                }
+            } // for
+//            if (dataKantorTemp != null) {
+//                listKantorRadius.add(dataKantorTemp);
+//                mMap.addMarker(new MarkerOptions()
+//                        .position(new LatLng(Double.parseDouble(dataKantorTemp.getLan()), Double.parseDouble(dataKantorTemp.getLon())))
+//                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.kantor))
+//                        .title(dataKantorTemp.getNama())
+//                        .snippet(dataKantorTemp.getAlamat()));
+//                Circle circle = mMap.addCircle(new CircleOptions()
+//                        .center(user)
+//                        .radius(50 * 1000)
+//                        .strokeWidth(1)
+//                        .strokeColor(Color.RED)
+//                        .fillColor(Color.argb(10, 220, 237, 200)));
+//                circle.setVisible(true);
+//            }
+
+            txt_rekomendasi_kantor.setText(namaKantor);
+            txt_rekomendasi_kantor.setTag(dataKantorTerdekat.getIDKantor());
+        }
+
     }
 
     private class ReverseGeocodingTask extends AsyncTask<LatLng, Void, String> {
@@ -1143,154 +1291,148 @@ public class SubmitFragment extends Fragment {
         }
     }
 
+//    public String httpPostFile(byte[] file, String url) throws Exception {
+//        Log.e(TAG,"Start Connection upload image :" + url);
+//
+//        HttpClient httpclient = new DefaultHttpClient();
+//        HttpPost httppost = new HttpPost(url);
+//        httppost.setHeader("Content-Type", "application/octet-stream");
+//        httppost.setEntity(new ByteArrayEntity(file));
+//
+//        HttpResponse response = httpclient.execute(httppost);
+//        HttpEntity entity = response.getEntity();
+//        String responseText = EntityUtils.toString(entity);
+//
+//        Log.e(TAG,"Response Upload Image: "+responseText);
+//        return responseText;
+//    }
 
-    public String httpPostFile(byte[] file, String url) throws Exception {
-        System.out.println("Start Connection " + url);
-
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(url);
-        httppost.setHeader("Content-Type", "application/octet-stream");
-
-        httppost.setEntity(new ByteArrayEntity(file));
-
-        HttpResponse response = httpclient.execute(httppost);
-        HttpEntity entity = response.getEntity();
-        String responseText = EntityUtils.toString(entity);
-
-        System.out.println("Fetch Data");
-        System.out.println(responseText);
-
-        return responseText;
-    }
-
-    private class AddImageTask extends AsyncTask<Void, Void, Void> {
-        //  ProgressDialog dialog;
-        public String dataResult = "";
-        public Bitmap bPhoto;
-        //String poiId = "";
-        File file;
-
-        public AddImageTask() {
-            if (!statusSent) {
-                file = new File(img_submit_location_1.getTag().toString());
-            } else {
-                file = new File(img_submit_location_2.getTag().toString());
-            }
-        }
-
-        private ProgressDialog pDialog;
-
-        @Override
-        protected void onPreExecute() {
-           /* dialog = ProgressDialog.show(activity, "", "Insert Image", true,
-                    false);
-            dialog.show();*/
-            progressDialog.show();
-        }
-        // Referensi : http://stackoverflow.com/questions/17388240/posting-image-file-to-wcf-rest-service-from-android
-        /*
-        Erorr dan Bug :
-        1. Upload Avatar via galerry bisa
-        2. Upload Avatar Via Camera bisa tapi masih ada BUG (harus 2x tekan tombol upload)
-
-        3. Upload Gambar Nasabah via Gallery --> Blom Bisa
-        4. Upload Gambar Nasabah via Camera --> Blum Bisa
-         */
-
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            try {
-                byte[] streamByteArray;
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                try {
-                    FileInputStream fis = new FileInputStream(this.file);
-                    bPhoto = BitmapFactory.decodeStream(fis);
-                } catch (Exception e) {
-                }
-                if (bPhoto != null) {
-                    bPhoto.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                    bPhoto.recycle();
-                    streamByteArray = stream.toByteArray();
-                    stream.close();
-                    stream = null;
-                    String token = DependencyInjection.Get(ISessionRepository.class).getToken();
-                    dataResult = httpPostFile(
-                            streamByteArray,
-                            Constants.API_SAVE_IMAGE_NASABAH + token + "/" + idNasabah);
-                    //"http://bni.yapyek.com/servicesreveral/upload_image_nasabah/"+token+"/"+id);
-                    //"http://bni.yapyek.com/servicesreveral/upload_image_avatar/"+token+"/"+id);
-                    Log.d("response", dataResult);
-                    JSONObject dataUser = null, status, result = null;
-                    result = new JSONObject(dataResult);
-                    int point;
-                    try {
-                        status = result.getJSONObject("status");
-                        if (status.getInt("code") == 200) {
-                            dataUser = result.getJSONObject("obj");
-                        } else {
-                            Toast.makeText(getActivity(), status.getString("description"), Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (dataUser != null) {
-                        try {
-                            String image = dataUser.getString("image");
-                            if (statusSent) {
-                                statusresult = true;
-                            }
-                            statusSent = true;
-
-                            //DependencyInjection.Get(ISqliteRepository.class).updateAvatarUser(image, DependencyInjection.Get(ISessionRepository.class).getUsername());
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Toast.makeText(getActivity(), "Data tidak tersedia !", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            } catch (Exception e) {
-                Log.e("log_tag", "Error in http connection " + e.toString());
-
-            }
-            Log.d(TAG, "onSuccessObject: sukses mereun");
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void unused) {
-            if (dataResult != "") {
-                try {
-                    JSONObject jo = new JSONObject(dataResult);
-                    JSONObject status = jo.getJSONObject("status");
-
-                    Log.d(TAG, "onSuccessObject: startup onPostExecute");
-                    Log.d(TAG, "Data Response Code  =" + status.getInt("code"));
-                } catch (Exception e) {
-
-                }
-            } else {
-                Log.d(TAG, "Dataresult: kosong");
-
-            }
-            progressDialog.dismiss();
-            if (!statusresult) {
-                new AddImageTask().execute();
-            } else if (statusresult) {
-                btn_submit_data_nasabah.setEnabled(true);
-                DependencyInjection.Get(ISqliteRepository.class).clearNasabah();
-                DependencyInjection.Get(ISqliteRepository.class).clearNasabahTemp();
-                Toast.makeText(getActivity(), "Data Berhasil Disimpan.", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
-                getActivity().finish();
-            }
-        }
-    }
+//    private class AddImageTask extends AsyncTask<Void, Void, Void> {
+//        //  ProgressDialog dialog;
+//        public String dataResult = "";
+//        public Bitmap bPhoto;
+//        //String poiId = "";
+//        File file;
+//        private SpotsDialog pDialog;
+//
+//        public AddImageTask() {
+//            if (!statusSent) {
+//                file = new File(img_submit_location_1.getTag().toString());
+//            } else {
+//                file = new File(img_submit_location_2.getTag().toString());
+//            }
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+////            dialog = ProgressDialog.show(activity, "", "Insert Image", true,false);
+////            dialog.show();
+////            progressDialog.show();
+//            pDialog = new SpotsDialog(getActivity(), "Image uploads...");
+//        }
+//        // Referensi : http://stackoverflow.com/questions/17388240/posting-image-file-to-wcf-rest-service-from-android
+//        /*
+//        Erorr dan Bug :
+//        1. Upload Avatar via galerry bisa --> done
+//        2. Upload Avatar Via Camera bisa tapi masih ada BUG (harus 2x tekan tombol upload) --> done
+//
+//        3. Upload Gambar Nasabah via Gallery --> Blom Bisa
+//        4. Upload Gambar Nasabah via Camera --> Blum Bisa
+//         */
+//
+//
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//
+//            try {
+//                byte[] streamByteArray;
+//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                try {
+//                    FileInputStream fis = new FileInputStream(this.file);
+//                    bPhoto = BitmapFactory.decodeStream(fis);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//                if (bPhoto != null) {
+//                    bPhoto.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//                    bPhoto.recycle();
+//                    streamByteArray = stream.toByteArray();
+//                    stream.close();
+////                    stream = null;
+//
+//                    String token = DependencyInjection.Get(ISessionRepository.class).getToken();
+//                    String urlServerImage = Constants.API_SAVE_IMAGE_NASABAH + token + "/" + "60";//idNasabah;
+//                    //"http://bni.yapyek.com/servicesreveral/upload_image_nasabah/"+token+"/"+id);
+//                    //"http://bni.yapyek.com/servicesreveral/upload_image_avatar/"+token+"/"+id);
+//                    dataResult = httpPostFile(streamByteArray,urlServerImage);
+//
+////                    JSONObject dataUser = null, status, result;
+////                    result = new JSONObject(dataResult);
+//////                    int point;
+////                    try {
+////                        status = result.getJSONObject("status");
+////                        if (status.getInt("code") == 200) {
+////                            dataUser = result.getJSONObject("obj");
+////                        } else {
+////                            Toast.makeText(getActivity(), status.getString("description"), Toast.LENGTH_SHORT).show();
+////                        }
+////                    } catch (JSONException e) {
+////                        e.printStackTrace();
+////                    }
+////                    if (dataUser != null) {
+////                        try {
+////                            String image = dataUser.getString("image");
+////                            if (statusSent) {
+////                                statusresult = true;
+////                            }
+////                            statusSent = true;
+////
+////                            //DependencyInjection.Get(ISqliteRepository.class).updateAvatarUser(image, DependencyInjection.Get(ISessionRepository.class).getUsername());
+////                            Log.e(TAG, "STATUS_SENT_IMAGE: "+statusSent);
+////
+////                        } catch (JSONException e) {
+////                            e.printStackTrace();
+////                        }
+////                    } else {
+////                        Toast.makeText(getActivity(), "Data tidak tersedia !", Toast.LENGTH_SHORT).show();
+////                    }
+//                }
+//            } catch (Exception e) {
+////                Log.e("log_tag", "Error in http connection " + e.toString());
+//                e.printStackTrace();
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void unused) {
+////            if (dataResult != "") {
+////                try {
+////                    JSONObject jo = new JSONObject(dataResult);
+////                    JSONObject status = jo.getJSONObject("status");
+////                    Log.e(TAG, "DATA_RESULT :" + jo);
+////                } catch (Exception e) {
+////                    e.printStackTrace();
+////                }
+////            } else {
+////                Log.e(TAG, "ON_POST_EXECUTE: dataResult is empty");
+////            }
+//
+////            if (!statusresult) {
+////                new AddImageTask().execute();
+////            } else if (statusresult) {
+//                btn_submit_data_nasabah.setEnabled(true);
+//                DependencyInjection.Get(ISqliteRepository.class).clearNasabah();
+//                DependencyInjection.Get(ISqliteRepository.class).clearNasabahTemp();
+//                Toast.makeText(getActivity(), "Data Berhasil Disimpan.", Toast.LENGTH_SHORT).show();
+////                Intent intent = new Intent(getActivity(), MainActivity.class);
+////                startActivity(intent);
+////                getActivity().finish();
+////            }
+//            pDialog.dismiss();
+//        }
+//    }
 }
 
 //Testgithub
