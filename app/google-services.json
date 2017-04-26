@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "112301198925",
+    "project_id": "api-project-112301198925"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112301198925:android:4557391dcdb37868",
+        "android_client_info": {
+          "package_name": "com.sahaware.resysbni"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "112301198925-o07nboo77fp0bst1sr9238j9p1hsaf8g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sahaware.resysbni",
+            "certificate_hash": "1B62E68F4EE66D62CDA32F9EF54192890663AE4D"
+          }
+        },
+        {
+          "client_id": "112301198925-986g16l4saekcgrv3fhkfed0688i7eec.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXlnRsno0B9N703_29_sM3p1YH5bqIEQc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

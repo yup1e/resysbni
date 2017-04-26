@@ -1,0 +1,332 @@
+package com.sahaware.resysbni.view.fragment;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.sahaware.resysbni.R;
+import com.sahaware.resysbni.entity.NasabahEntity;
+import com.sahaware.resysbni.helper.DependencyInjection;
+import com.sahaware.resysbni.helper.MyApplication;
+import com.sahaware.resysbni.repository.ISessionRepository;
+import com.sahaware.resysbni.repository.ISqliteRepository;
+import com.sahaware.resysbni.util.Constants;
+import com.sahaware.resysbni.view.activity.DetailNasabahActivity;
+import com.sahaware.resysbni.view.adapter.ListNasabahAdapter;
+import com.sahaware.resysbni.view.custom.DividerItemDecoration;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
+import dmax.dialog.SpotsDialog;
+
+
+public class DisposisiFragment extends Fragment {
+
+    private static final String TAG = "DisposisiFragment";
+    private FragmentActivity myContext;
+    private RecyclerView recyclerView;
+    private ListNasabahAdapter mAdapter;
+    private List<NasabahEntity> nasabahList;
+    private SpotsDialog progressDialog;
+    private SwipeRefreshLayout swipeRefreshListNasabahLayout;
+
+    public DisposisiFragment() {
+        nasabahList = new ArrayList<>();
+    }
+
+    @Override
+    public void onAttach(Activity act) {
+        myContext = (FragmentActivity) act;
+        super.onAttach(act);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle saveInstanceState) {
+        super.onActivityCreated(saveInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+        Log.e(TAG,"onCreateView");
+        View view = inflater.inflate(R.layout.fragment_list, container, false);
+        LinearLayout toolbar = (LinearLayout) view.findViewById(R.id.toolbar);
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        mTitle.setText("List Disposisi Nasabah");
+        swipeRefreshListNasabahLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshListNasabahLayout);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
+        mAdapter = new ListNasabahAdapter(nasabahList, getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(mAdapter);
+        swipeRefreshListNasabahLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Refresh items
+                DependencyInjection.Get(ISqliteRepository.class).clearNasabahDispos();
+                getDataUser();
+            }
+        });
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity().getApplicationContext(), recyclerView, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+//                progressDialog.show();
+                NasabahEntity nasabah = nasabahList.get(position);
+//                getDetailUser(nasabah.getIdNasabah());
+                Intent intent = new Intent(getActivity(), DetailNasabahActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt(Constants.KEY_ID, nasabah.getIdNasabah());
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+
+        return view;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (isVisibleToUser) {
+            if (progressDialog==null) {
+//                progressDialog = new SpotsDialog(getActivity(), "Mencari data...");
+            }
+            if(DependencyInjection.Get(ISqliteRepository.class).isDataNasabahDisposEmpty())
+            {
+//                progressDialog.show();
+                getDataUser();
+            }else {
+                showDB();
+            }
+        }
+    }
+
+    public void showDB(){
+        List<NasabahEntity> nasabahs = DependencyInjection.Get(ISqliteRepository.class).getAllNasabahDispos();
+//        List<NasabahEntity> nasabahTemp = DependencyInjection.Get(ISqliteRepository.class).getAllNasabahTemp();
+        nasabahList.clear();
+        if (nasabahs != null) {
+            for (NasabahEntity nasabah : nasabahs) {
+                nasabahList.add(nasabah);
+            }
+        }
+//        if (nasabahTemp != null) {
+//            for (NasabahEntity dataNasabahTemp : nasabahTemp) {
+//                nasabahList.add(dataNasabahTemp);
+//            }
+//        }
+        if(mAdapter!= null) {
+            mAdapter.notifyDataSetChanged();
+        }
+
+        if (progressDialog!=null) {
+//            progressDialog.dismiss();
+        }
+    }
+
+    public void getDataUser() {
+        final int DEFAULT_TIMEOUT = 20 * 1000;
+        JSONObject jsonParams = new JSONObject();
+        StringEntity entity = null;
+        int page = 1, pageSize = 20;
+        try {
+            jsonParams.put("idUser", DependencyInjection.Get(ISessionRepository.class).getId());
+            jsonParams.put("page", page);
+            jsonParams.put("pageSize", pageSize);
+            jsonParams.put("token", DependencyInjection.Get(ISessionRepository.class).getToken());
+            entity = new StringEntity(jsonParams.toString());
+            entity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json;charset=utf-8"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.setTimeout(DEFAULT_TIMEOUT);
+        client.setConnectTimeout(DEFAULT_TIMEOUT);
+        client.setResponseTimeout(DEFAULT_TIMEOUT);
+        client.post(getActivity(), Constants.API_GET_DATA_NASABAH_DISPOS, entity, "application/json", new JsonHttpResponseHandler() {
+
+            @Override
+            public void onStart() {
+                progressDialog.show();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, JSONObject response) {
+
+                JSONObject dataNasabah, status;
+                JSONArray listNasabah = null;
+
+                try {
+                    status = response.getJSONObject("status");
+                    if(MyApplication.validateOtherLogin(status.getInt("code"),getActivity())) return;
+
+                    if (status.getInt("code") == 200) {
+                        listNasabah = response.getJSONArray("listObj");
+                    }else{
+                        Toast.makeText(getActivity(), "Terjadi kesalahan koneksi", Toast.LENGTH_LONG).show();
+                        Log.e(TAG,"StatusResponse :"+status.toString());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                String img1, img2;
+                if (listNasabah != null) {
+                    DependencyInjection.Get(ISqliteRepository.class).clearNasabah();
+                    for (int i = 0; i < listNasabah.length(); i++) {
+                        try {
+                            dataNasabah = listNasabah.getJSONObject(i);
+                            String alamat = dataNasabah.getString("Alamat");
+                            String anggunan = dataNasabah.getString("Anggunan");
+                            Integer idNasabah = dataNasabah.getInt("IDNasabah");
+                            String jumlahKredit = dataNasabah.getString("JmlhKredit");
+                            String ktp = dataNasabah.getString("KTP");
+                            String lamaUsaha = dataNasabah.getString("LamaUsaha");
+                            Double lat = dataNasabah.getDouble("Lan");
+                            Double lang = dataNasabah.getDouble("Lon");
+                            String nama = dataNasabah.getString("Nama");
+                            String noTelp = dataNasabah.getString("NoTlpn");
+                            String sektorUsaha = dataNasabah.getString("SektorUsaha");
+                            String namaKantor = dataNasabah.getString("namaKantor");
+                            String jenis = dataNasabah.getString("namaReveral");
+                            String namaStatus = dataNasabah.getString("namaStatus");
+                            String tglSubmit = dataNasabah.getString("tglDibuat");
+                            String sla = dataNasabah.getString("sla");
+                            String namaMarketing = dataNasabah.getString("NamaMarketing");
+                            Integer idMarketing = dataNasabah.getInt("idMarketing");
+                            Integer idreveral = dataNasabah.getInt("Idreveral");
+                            String namaUser = dataNasabah.getString("namaUser");
+                            Integer idUser = dataNasabah.getInt("idUser");
+                            try {
+                                JSONObject image = dataNasabah.getJSONObject("Image");
+
+                                img1 = image.getString(Constants.KEY_IMAGE_1);
+                                img2 = image.getString(Constants.KEY_IMAGE_2);
+                            } catch (JSONException e) {
+                                img1 = null;
+                                img2 = null;
+                            }
+                            DependencyInjection.Get(ISqliteRepository.class).addNasabahDispos(
+                                    new NasabahEntity(ktp, nama, alamat, noTelp, sektorUsaha, lamaUsaha, jenis, jumlahKredit, anggunan, namaKantor,
+                                            tglSubmit, namaStatus, img1, img2, lat, lang, namaUser, idNasabah, sla, namaMarketing, idMarketing,
+                                            idreveral,idUser));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "Data tidak tersedia !", Toast.LENGTH_LONG).show();
+                }
+//                if (progressDialog!=null) {
+                    progressDialog.dismiss();
+//                }
+                swipeRefreshListNasabahLayout.setRefreshing(false);
+                showDB();
+            }
+
+            @Override
+            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, java.lang.Throwable throwable, JSONObject errorResponse) {
+                progressDialog.dismiss();
+                Toast.makeText(getActivity(), "Maaf koneksi bermasalah, coba beberapa saat lagi!", Toast.LENGTH_LONG).show();
+                Log.e(TAG,"API :"+Constants.API_GET_DATA_NASABAH+" koneksi gagal (Code: "+statusCode+")");
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+            }
+        });
+    }
+
+    public interface ClickListener {
+        void onClick(View view, int position);
+
+        void onLongClick(View view, int position);
+    }
+
+    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+
+        private GestureDetector gestureDetector;
+        private DisposisiFragment.ClickListener clickListener;
+
+        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final DisposisiFragment.ClickListener clickListener) {
+            this.clickListener = clickListener;
+            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                    if (child != null && clickListener != null) {
+                        clickListener.onLongClick(child, recyclerView.getChildPosition(child));
+                    }
+                }
+            });
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            View child = rv.findChildViewUnder(e.getX(), e.getY());
+            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+                clickListener.onClick(child, rv.getChildPosition(child));
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+        }
+    }
+}
